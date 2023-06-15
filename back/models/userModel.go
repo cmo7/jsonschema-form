@@ -10,7 +10,7 @@ type User struct {
 	gorm.Model
 	Email    string `json:"email" gorm:"unique"`
 	Password string `json:"password"`
-	Friends  []User `gorm:"many2many:friends;" json:"friends"`
+	Friends  []User `gorm:"many2many:user_friends;" json:"friends"`
 }
 
 type UserDTO struct {
