@@ -1,24 +1,48 @@
 {
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "server": "localhost",
-            "port": 5432,
-            "driver": "PostgreSQL",
-            "name": "Postgres Admin",
-            "database": "postgres",
-            "username": "postgres",
-            "password": "postgres"
-        },
-        {
-            "previewLimit": 50,
-            "server": "localhost",
-            "port": 5432,
-            "driver": "PostgreSQL",
-            "name": "Test",
-            "database": "test",
-            "username": "test",
-            "password": "test"
-        }
-    ]
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "Postgres Admin",
+      "database": "postgres",
+      "username": "postgres",
+      "password": "postgres"
+    },
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "Test",
+      "database": "test",
+      "username": "test",
+      "password": "test"
+    }
+  ],
+  // Regla "suave" a 80 caracteres, regla "dura" a 120 caracteres
+  "editor.rulers": [
+    {
+      "color": "#ffffff2f",
+      "column": 80
+    },
+    {
+      "color": "#ffffff9d",
+      "column": 120
+    }
+  ],
+  // Cuando se guarda un archivo, se ejecuta eslint y prettier
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ]
 }

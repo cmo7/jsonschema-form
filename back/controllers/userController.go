@@ -90,7 +90,8 @@ func UserGet(c *fiber.Ctx) error {
 				"message": fiber.ErrNotFound.Message,
 			})
 	}
-	return c.JSON(user)
+	userDTO := ToDTO(&user)
+	return c.JSON(userDTO)
 }
 
 func UserUpdate(c *fiber.Ctx) error {
@@ -136,6 +137,29 @@ func UserDelete(c *fiber.Ctx) error {
 	initializers.DB.Delete(&user, id)
 	return c.JSON(fiber.Map{
 		"message": "Successfully deleted",
+	})
+}
+
+func UserAddFriend(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var user models.User
+	if initializers.DB.First(&user, id).Error != nil {
+		return c.Status(fiber.StatusNotFound).
+			JSON(fiber.Map{
+				"message": fiber.ErrNotFound.Message,
+			})
+	}
+	friendId := c.Params("friendId")
+	var friend models.User
+	if initializers.DB.First(&friend, friendId).Error != nil {
+		return c.Status(fiber.StatusNotFound).
+			JSON(fiber.Map{
+				"message": fiber.ErrNotFound.Message,
+			})
+	}
+	initializers.DB.Model(&user).Association("Friends").Append(&friend)
+	return c.JSON(fiber.Map{
+		"message": "Successfully added friend",
 	})
 }
 

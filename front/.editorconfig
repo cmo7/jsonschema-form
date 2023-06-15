@@ -1,0 +1,13 @@
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Set default charset
+[*.{js,jsx,ts,tsx,css,scss,html,json,md}]
+charset = utf-8
+
+# 2 space indentation
+[*.{js,jsx,ts,tsx,css,scss,html,json,md}, .editorconfig]
+indent_style = space
+indent_size = 2

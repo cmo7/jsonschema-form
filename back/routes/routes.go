@@ -22,4 +22,5 @@ func userRoutes(api fiber.Router) {
 	user.Get("/:id", controllers.UserGet).Name("userGet")
 	user.Put("/:id", controllers.UserUpdate).Name("userUpdate")
 	user.Delete("/:id", controllers.UserDelete).Name("userDelete")
+	user.Post("/add-friend/:id/:friendId", controllers.UserAddFriend).Name("userAddFriend")
 }
