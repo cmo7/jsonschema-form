@@ -1,0 +1,30 @@
+### Register
+POST http://localhost:8080/api/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "user",
+    "email": "user2@mail.com",
+    "password": "password",
+    "password_confirm": "password",
+    "avatar": "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
+}
+
+### Login
+POST http://localhost:8080/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "user2@mail.com",
+    "password": "password"
+}
+
+### Logout
+GET http://localhost:8080/api/auth/logout HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODY5NDI0OTksImlhdCI6MTY4NjkzODg5OSwibmJmIjoxNjg2OTM4ODk5LCJzdWIiOiJmMzM1OGMyNS0zYjcyLTQyYTUtYmNkMS1iYTNmNDZmZjEyMDMifQ.hHNLxPRE2cljLBVY6AZVsQYbXnJrhwzkMpSzbdvY7Yg
+
+
+### Get Current User
+GET http://localhost:8080/api/auth/getCurrentUser HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODY5NDI0OTksImlhdCI6MTY4NjkzODg5OSwibmJmIjoxNjg2OTM4ODk5LCJzdWIiOiJmMzM1OGMyNS0zYjcyLTQyYTUtYmNkMS1iYTNmNDZmZjEyMDMifQ.hHNLxPRE2cljLBVY6AZVsQYbXnJrhwzkMpSzbdvY7Yg

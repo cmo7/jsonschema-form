@@ -4,14 +4,23 @@ import (
 	"example/json-schema/initializers"
 	"example/json-schema/routes"
 	"os"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
+// Enviroments
+const (
+	development   = "development"
+	preproduction = "preproduction"
+	production    = "production"
+	container     = "container"
+)
+
 func init() {
-	initializers.LoadEnviromentVariables()
+	initializers.LoadEnviromentVariables(development)
 	initializers.ConnectToDataBase()
 	initializers.SyncDataBase()
 }
@@ -24,9 +33,13 @@ func main() {
 
 	// Enable Middleware
 	app.Use(logger.New())
+
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173, http://localhost:4173",
 		AllowHeaders: "Origin, Content-Type, Accept",
+		// Add AllowOrigins to .env
+		AllowOrigins: strings.Join([]string{
+			os.Getenv("CLIENT_URL"),
+		}, ","),
 	}))
 
 	// Static Routes

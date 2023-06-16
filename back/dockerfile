@@ -5,10 +5,9 @@ FROM golang:1.16-alpine
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
-COPY *.go controllers initializers lib models public routes services ./
+COPY *.go controllers initializers models public routes services ./
 COPY .env.docker ./.env
-RUN CGO_ENABLED=0 GOOS=linux go build -o /server
-
+RUN CGO_ENABLED=0 GOOS=linux go build -o server
 EXPOSE 8080
 
 CMD [ "/server" ]

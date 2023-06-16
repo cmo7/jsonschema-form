@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+volumes:
+  pgdata:
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

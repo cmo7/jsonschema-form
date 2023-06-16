@@ -6,24 +6,18 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { Root, UserProfile, UserList, CreateUser } from './routes';
+import { Error404 } from './pages/error404';
+import { Register, Root } from './routes';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Root />,
-  },
-  {
-    path: '/user/:userId',
-    element: <UserProfile />,
-  },
-  {
-    path: '/users',
-    element: <UserList />,
+    errorElement: <Error404 />,
     children: [
       {
-        path: 'users/create',
-        element: <CreateUser />,
+        path: 'register',
+        element: <Register />,
       },
     ],
   },

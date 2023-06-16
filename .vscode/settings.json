@@ -17,8 +17,8 @@
       "driver": "PostgreSQL",
       "name": "Test",
       "database": "test",
-      "username": "test",
-      "password": "test"
+      "username": "postgres",
+      "password": "postgres"
     }
   ],
   // Regla "suave" a 80 caracteres, regla "dura" a 120 caracteres
@@ -34,7 +34,8 @@
   ],
   // Cuando se guarda un archivo, se ejecuta eslint y prettier
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -44,5 +45,10 @@
     "javascriptreact",
     "typescript",
     "typescriptreact"
-  ]
+  ],
+  "go.formatTool": "goimports",
+  "go.useLanguageServer": true,
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  }
 }

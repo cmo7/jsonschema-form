@@ -1,0 +1,8 @@
+### Get All Users
+GET http://localhost:8080/api/user HTTP/1.1
+
+### Get User By Id
+GET http://localhost:8080/api/user/f3358c25-3b72-42a5-bcd1-ba3f46ff1203 HTTP/1.1
+
+### Get register schema
+GET http://localhost:8080/api/user/schema/SiginInput HTTP/1.1
