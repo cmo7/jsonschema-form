@@ -8,10 +8,13 @@ import { Loading } from './loading';
 
 export default function Register() {
   const registerSchema = useQuery('schema', async () => getSchema(endpoints.user, 'SiginInput'));
-  const mutation = useMutation(sendForm<any>);
-
+  // TODO: Fix any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { mutateAsync } = useMutation(sendForm<any>);
+  // TODO: Fix any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function manageSubmit(data: any) {
-    const response = await mutation.mutateAsync(data);
+    const response = await mutateAsync(data);
     console.log(response);
     if (response.status === 'success') {
       window.location.href = '/';

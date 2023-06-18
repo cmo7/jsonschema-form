@@ -64,11 +64,50 @@ func GetUser(c *fiber.Ctx) error {
 }
 
 func GetAllUsers(c *fiber.Ctx) error {
+	var payload models.PageableRequest
+	if err := c.BodyParser(&payload); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  "error",
+			"message": err.Error(),
+		})
+	}
+	log.Println(payload)
+
+	errors := models.ValidateStruct(payload)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  "error",
+			"message": errors,
+		})
+	}
+
+	pageSize := payload.Size
+	page := payload.Page
+
+	if pageSize == 0 {
+		pageSize = 10
+	}
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+
 	var users []models.User
-	initializers.DB.Find(&users)
+	initializers.DB.Limit(pageSize).Offset(offset).Find(&users)
+	var count int64
+	initializers.DB.Model(&users).Count(&count)
+
+	log.Println("page: ", page)
+	log.Println("pageSize: ", pageSize)
+	log.Println("offset: ", offset)
+	log.Println("count: ", count)
+	log.Println(users)
 	var usersResponse []models.UserResponse
 	for _, user := range users {
 		usersResponse = append(usersResponse, models.FilterUserRecord(&user))
 	}
-	return c.Status(fiber.StatusOK).JSON(usersResponse)
+
+	pageable := models.NewPage[models.UserResponse](usersResponse, len(users), page, pageSize)
+
+	return c.Status(fiber.StatusOK).JSON(pageable)
 }

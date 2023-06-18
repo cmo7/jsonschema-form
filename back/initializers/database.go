@@ -24,6 +24,10 @@ func ConnectToDataBase() {
 	default:
 		log.Fatal("Database engine not supported")
 	}
+
+	if os.Getenv("DB_QUERY_LOGGING") == "true" {
+		DB.Logger = logger.Default.LogMode(logger.Info)
+	}
 }
 
 func SyncDataBase() {
@@ -54,7 +58,7 @@ func connectToPostgres() {
 		log.Fatal("Error connecting to database")
 	}
 	DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
-	DB.Logger = logger.Default.LogMode(logger.Info)
+
 }
 
 func connectToSQLServer() {
