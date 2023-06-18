@@ -65,7 +65,8 @@ func GetUser(c *fiber.Ctx) error {
 
 func GetAllUsers(c *fiber.Ctx) error {
 	var payload models.PageableRequest
-	if err := c.BodyParser(&payload); err != nil {
+  err := c.BodyParser(&payload) 
+	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  "error",
 			"message": err.Error(),

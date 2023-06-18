@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "irongeek.vscode-env",
+    "dbaeumer.vscode-eslint",
+    "golang.go",
+    "esbenp.prettier-vscode",
+    "humao.rest-client",
+    "sonarsource.sonarlint-vscode",
+    "antfu.vite",
+    "ms-azuretools.vscode-docker"
+  ]
+}
