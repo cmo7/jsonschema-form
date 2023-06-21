@@ -27,7 +27,8 @@ func SignUpUser(c *fiber.Ctx) error {
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  "error",
-			"message": errors,
+			"message": "Invalid input",
+			"errors":  errors,
 		})
 	}
 	// Check if password and password confirmation are equal
@@ -150,7 +151,10 @@ func LogInUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  "success",
 		"message": "User logged in successfully",
-		"token":   tokenString,
+		"data": fiber.Map{
+			"user":  models.FilterUserRecord(&user),
+			"token": tokenString,
+		},
 	})
 }
 
@@ -172,8 +176,6 @@ func GetCurrentUser(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.UserResponse)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status": "success",
-		"data": fiber.Map{
-			"user": user,
-		},
+		"data":   user,
 	})
 }

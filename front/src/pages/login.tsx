@@ -9,7 +9,7 @@ import { endpoints } from '../api/endpoints';
 import { useAuth } from '../hooks/auth';
 import { customWidgets } from '../rjsf-config/widgets';
 import { ApiResponse } from '../types/api-response';
-import { SignUpInput, UserResponse } from '../types/generated/models';
+import { LogInInput, UserResponse } from '../types/generated/models';
 import { Loading } from './loading';
 
 const uiSchema: UiSchema = {
@@ -19,28 +19,29 @@ const uiSchema: UiSchema = {
   password: {
     'ui:widget': 'password',
   },
-  password_confirm: {
-    'ui:widget': 'password',
-  },
-  avatar: {
-    'ui:widget': 'file',
-    'ui:options': {
-      accept: 'image/*',
-      filePreview: true,
-    },
-  },
 };
 
-export default function Register() {
+export default function Login() {
   const auth = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<SignUpInput>();
+  const [formData, setFormData] = useState<LogInInput>();
+
+  type Response = ApiResponse<{
+    user: UserResponse;
+    token: string;
+  }>;
+
   const mutation = useMutation({
-    mutationFn: (data: SignUpInput) => sendForm<SignUpInput, ApiResponse<UserResponse>>(endpoints.register, data),
-    onSuccess: (data) => {
-      console.log('Usuario Creado con éxito');
-      console.log(data, 'data');
-      navigate('/login');
+    mutationFn: (data: LogInInput) => sendForm<LogInInput, Response>(endpoints.login, data),
+    onSuccess: (response) => {
+      if (response.status === 'error') {
+        console.log(response.message, 'error');
+        return;
+      }
+      if (response.data.token) {
+        auth.login(response.data.token, response.data.user);
+      }
+      navigate('/');
     },
     onError: (error) => {
       console.log(error, 'error');
@@ -53,20 +54,19 @@ export default function Register() {
     }
   }, [auth, navigate]);
 
-  const registerSchema = useQuery('schema', async () => getSchema(endpoints.user, 'SiginInput'));
+  const loginSchema = useQuery('schema', async () => getSchema(endpoints.user, 'LogInInput'));
 
-  if (registerSchema.isLoading) return <Loading />;
+  if (loginSchema.isLoading) return <Loading />;
+  if (loginSchema.isError) return <div>error</div>;
   if (mutation.isLoading) return <Loading />;
-
   return (
     <Form
-      schema={registerSchema.data}
+      schema={loginSchema.data}
       uiSchema={uiSchema}
       validator={validator}
-      formData={formData}
       widgets={customWidgets}
+      formData={formData}
       onSubmit={() => {
-        console.log(formData, 'form data');
         mutation.mutate(formData);
       }}
       onChange={(e) => {

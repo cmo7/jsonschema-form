@@ -1,8 +1,8 @@
-import { PropsWithChildren } from 'react';
-import Header from './header';
-import Footer from './footer';
 import { Box, Flex, VStack } from '@chakra-ui/react';
-import Sidebar from './sidebar';
+import { PropsWithChildren } from 'react';
+import Footer from '../../components/footer';
+import Header from '../../components/header';
+import Sidebar from '../../components/sidebar';
 
 export default function UserLayout(props: PropsWithChildren) {
   return (

@@ -15,7 +15,7 @@ import (
 var DB *gorm.DB
 
 func ConnectToDataBase() {
-	databaseEngine := os.Getenv("DATABASE_ENGINE")
+	databaseEngine := os.Getenv("DB_ENGINE")
 	switch databaseEngine {
 	case "postgres":
 		connectToPostgres()

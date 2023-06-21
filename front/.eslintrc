@@ -33,15 +33,6 @@
     "import/named": "off",
     "import/no-named-as-default": "off",
     "react/react-in-jsx-scope": "off",
-    "react-refresh/only-export-components": "warn",
-    "no-unused-vars": [
-      "error",
-      {
-        "vars": "all",
-        "args": "after-used",
-        "ignoreRestSiblings": true,
-        "argsIgnorePattern": "^_"
-      }
-    ]
+    "react-refresh/only-export-components": "warn"
   }
 }
