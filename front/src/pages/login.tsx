@@ -4,13 +4,14 @@ import validator from '@rjsf/validator-ajv8';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { getSchema, sendForm } from '../api/auth-requests';
+import { sendForm } from '../api/auth-requests';
 import { endpoints } from '../api/endpoints';
 import { useAuth } from '../hooks/auth';
 import { customWidgets } from '../rjsf-config/widgets';
 import { ApiResponse } from '../types/api-response';
 import { LogInInput, UserResponse } from '../types/generated/models';
 import { Loading } from './loading';
+import { getSchema } from '../api/form-schema-requests';
 
 const uiSchema: UiSchema = {
   email: {
@@ -54,7 +55,7 @@ export default function Login() {
     }
   }, [auth, navigate]);
 
-  const loginSchema = useQuery('schema', async () => getSchema(endpoints.user, 'LogInInput'));
+  const loginSchema = useQuery('schema', async () => getSchema('LogInInput'));
 
   if (loginSchema.isLoading) return <Loading />;
   if (loginSchema.isError) return <div>error</div>;

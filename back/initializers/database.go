@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -15,8 +14,7 @@ import (
 var DB *gorm.DB
 
 func ConnectToDataBase() {
-	databaseEngine := os.Getenv("DB_ENGINE")
-	switch databaseEngine {
+	switch Config.Database.Engine {
 	case "postgres":
 		connectToPostgres()
 	case "sqlserver":
@@ -41,19 +39,14 @@ func SyncDataBase() {
 }
 
 func connectToPostgres() {
-	p := os.Getenv("DB_PORT")
-	port, err := strconv.ParseUint(p, 10, 32)
-	if err != nil {
-		log.Fatal("Error parsing port")
-	}
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		port,
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
+		Config.Database.Host,
+		Config.Database.Port,
+		Config.Database.User,
+		Config.Database.Password,
+		Config.Database.Database,
 	)
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	DB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Error connecting to database")
 	}

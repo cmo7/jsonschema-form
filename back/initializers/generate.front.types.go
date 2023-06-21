@@ -17,6 +17,8 @@ func GenerateFrontTypes() {
 	converter := typescriptify.New().
 		WithInterface(true).
 		WithBackupDir("").
+
+		// Add models here
 		Add(models.UserResponse{}).
 		Add(models.LogInInput{}).
 		Add(models.SignUpInput{}).

@@ -3,7 +3,7 @@ package main
 import (
 	"example/json-schema/initializers"
 	"example/json-schema/routes"
-	"os"
+	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,37 +23,42 @@ const (
 )
 
 func init() {
-	initializers.LoadEnviromentVariables(development)
+
+	initializers.LoadConfig(development)
 	initializers.ConnectToDataBase()
-	if os.Getenv("DB_AUTO_MIGRATE") == "true" {
+
+	generate := initializers.Config.Generate
+	if generate.AutoMigrate {
 		initializers.SyncDataBase()
 	}
-	if os.Getenv("GENERATE_INTERFACES") == "true" {
+	if generate.FrontTypes {
 		initializers.GenerateFrontTypes()
 	}
+	initializers.GenerateJsonFormSchemas()
 }
 
 func main() {
 	// Create App
 	app := fiber.New(fiber.Config{
-		AppName: os.Getenv("APP_NAME"),
+		AppName: initializers.Config.AppName,
 	})
 
 	// Register Middleware
-
-	if os.Getenv("LOG_ENABLED") == "true" || os.Getenv("LOG_ENABLED") == "" {
+	if initializers.Config.Logger.MainLogger {
 		app.Use(logger.New())
 	}
 
-	if os.Getenv("MID_HELMET") == "true" || os.Getenv("MID_HELMET") == "" {
+	midlewareConfig := initializers.Config.Middleware
+
+	if midlewareConfig.Helmet {
 		app.Use(helmet.New())
 	}
 
-	if os.Getenv("MID_COMPRESS") == "true" || os.Getenv("MID_COMPRESS") == "" {
+	if midlewareConfig.Compress {
 		app.Use(compress.New())
 	}
 
-	if os.Getenv("MID_CACHE") == "true" || os.Getenv("MID_CACHE") == "" {
+	if midlewareConfig.Cache {
 		app.Use(cache.New())
 	}
 
@@ -67,18 +72,17 @@ func main() {
 			"X-Requested-With",
 		}, ","),
 		AllowOrigins: strings.Join([]string{
-			os.Getenv("CLIENT_URL"),
+			initializers.Config.Client.URL,
 		}, ","),
 	}))
 
 	// Client Serving Mode
-	clientMode := os.Getenv("CLIENT_MODE")
-	switch clientMode {
+	switch initializers.Config.Client.Mode {
 	case "internal":
 		app.Static("/", "./public").Name("public")
 	case "external":
 		app.Get("/", func(c *fiber.Ctx) error {
-			return c.Redirect(os.Getenv("CLIENT_URL"))
+			return c.Redirect(initializers.Config.Client.URL)
 		})
 	default:
 		panic("CLIENT_MODE not defined or invalid")
@@ -91,13 +95,16 @@ func main() {
 
 	// Run Server
 
-	if os.Getenv("TLS_ENABLED") == "true" {
-		err := app.ListenTLS(":"+os.Getenv("TLS_PORT"), os.Getenv("TLS_CERT"), os.Getenv("TLS_KEY"))
+	webConfig := initializers.Config.WebServer
+	portString := fmt.Sprintf(":%d", webConfig.Port)
+
+	if initializers.Config.WebServer.TLS {
+		err := app.ListenTLS(portString, webConfig.CertFile, webConfig.KeyFile)
 		if err != nil {
 			panic(err)
 		}
 	} else {
-		err := app.Listen(":" + os.Getenv("PORT"))
+		err := app.Listen(portString)
 		if err != nil {
 			panic(err)
 		}

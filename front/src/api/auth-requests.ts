@@ -3,9 +3,7 @@ import { UserResponse } from '../types/generated/models';
 import { endpoints } from './endpoints';
 import { http } from './http-methods';
 
-export async function getSchema(endpoint: string, schemaName: string) {
-  return http.get<unknown>(`${endpoint}/schema/${schemaName}`);
-}
+
 
 export async function sendForm<Req, Res>(endpoint: string, data: Req) {
   console.log('sendForm', endpoint, data);

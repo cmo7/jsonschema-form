@@ -6,7 +6,6 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import ProtectedRoute from './components/protected-route';
 import { Error404 } from './pages/error404';
 import { AuthProvider } from './providers/auth-context';
 import { Login, Profile, Register, UserRoot } from './user-pages';
@@ -27,11 +26,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'profile',
-        element: (
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        ),
+        element: <Profile />,
       },
     ],
   },

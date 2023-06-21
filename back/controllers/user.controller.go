@@ -6,42 +6,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/swaggest/jsonschema-go"
 )
-
-func UserSchema(c *fiber.Ctx) error {
-	schemaName := c.Params("schemaName")
-	reflector := jsonschema.Reflector{}
-
-	// Get correct Model
-	var model interface{}
-	switch schemaName {
-	case "SiginInput":
-		model = models.SignUpInput{}
-	case "LogInInput":
-		model = models.LogInInput{}
-	case "UserResponse":
-		model = models.UserResponse{}
-	case "ErrorResponse":
-		model = models.ErrorResponse{}
-	default:
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": fiber.ErrNotFound.Message,
-			"data":    nil,
-		})
-	}
-
-	// Reflect and teg schema
-	schema, err := reflector.Reflect(model)
-	log.Println(schema)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": fiber.ErrInternalServerError.Message,
-			"data":    err,
-		})
-	}
-	return c.JSON(schema)
-}
 
 func GetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -65,7 +30,7 @@ func GetUser(c *fiber.Ctx) error {
 
 func GetAllUsers(c *fiber.Ctx) error {
 	var payload models.PageableRequest
-  err := c.BodyParser(&payload) 
+	err := c.BodyParser(&payload)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  "error",

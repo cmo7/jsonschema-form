@@ -18,6 +18,8 @@ func AddRoutes(app *fiber.App) {
 			"message": "Server is running",
 		})
 	})
+
+	api.Get("/schema/:schemaName", controllers.GetSchema).Name("userSchema")
 	// User Routes
 	authRoutes(&api)
 	userRoutes(&api)
@@ -36,7 +38,6 @@ func userRoutes(api *fiber.Router) {
 	router := *api
 	user := router.Group("/user")
 	// Auxiliar Routes
-	user.Get("/schema/:schemaName", controllers.UserSchema).Name("userSchema")
 
 	user.Get("/:id", controllers.GetUser).Name("getUser")
 	user.Get("/", controllers.GetAllUsers).Name("getUsers")
