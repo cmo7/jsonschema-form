@@ -1,57 +1,46 @@
 {
-  // See https://go.microsoft.com/fwlink/?LinkId=733558
-  // for the documentation about the tasks.json format
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "run back dev",
+      "label": "backend dev",
       "type": "shell",
       "command": "cd back && air",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false,
-        "group": "dev run"
-      },
       "problemMatcher": ["$go"],
+
       "runOptions": {
         "runOn": "folderOpen"
+      },
+      "presentation": {
+        "group": "dev server"
       }
     },
     {
-      "label": "run front dev",
+      "label": "frontend dev",
       "type": "shell",
-      "command": "cd front && pnpm dev .",
+      "command": "cd front && pnpm dev",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false,
-        "group": "dev run"
-      },
-      "problemMatcher": ["$tsc"],
       "runOptions": {
         "runOn": "folderOpen"
+      },
+      "presentation": {
+        "group": "dev server"
       }
     },
     {
-      "label": "Install Client",
+      "label": "database up",
       "type": "shell",
-      "command": "cd front && pnpm build && cd .. && cp front/dist/* back/public/ -r",
-      "group": "none"
+      "command": "podman-compose up -d",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      }
     }
   ]
 }

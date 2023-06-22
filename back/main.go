@@ -83,6 +83,10 @@ func main() {
 		panic("CLIENT_MODE not defined or invalid")
 	}
 
+	// Redirect to Client
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Redirect(os.Getenv("CLIENT_URL"))
+	})
 	// Add Routes
 	routes.AddApiRoutes(app)
 
