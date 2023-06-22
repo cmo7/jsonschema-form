@@ -20,3 +20,10 @@ func ValidateStruct[T any](payload T) []*ErrorResponse {
 	}
 	return errors
 }
+
+// ErrorResponse is the response payload for error response
+type ErrorResponse struct {
+	FailedField string `json:"failed_field"`
+	Tag         string `json:"tag"`
+	Value       string `json:"value,omitempty"`
+}

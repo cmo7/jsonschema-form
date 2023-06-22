@@ -8,4 +8,5 @@ export const endpoints: EndpointList = {
   logout: 'auth/logout',
   currentUser: 'auth/getCurrentUser',
   user: 'user',
+  apiRoutes: 'administration/routes',
 };

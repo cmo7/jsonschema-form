@@ -6,9 +6,9 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { Error404 } from './pages/error404';
+import { ApiView } from './pages/admin-pages';
+import { Error404, Login, Profile, Register, UserRoot } from './pages/user-pages';
 import { AuthProvider } from './providers/auth-context';
-import { Login, Profile, Register, UserRoot } from './user-pages';
 
 const router = createBrowserRouter([
   {
@@ -32,7 +32,14 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin',
-    element: <div>Admin</div>,
+    element: <UserRoot />,
+    errorElement: <Error404 />,
+    children: [
+      {
+        path: 'api-view',
+        element: <ApiView />,
+      },
+    ],
   },
 ]);
 

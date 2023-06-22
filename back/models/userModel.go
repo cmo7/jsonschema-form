@@ -21,6 +21,14 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"type:timestamp;null"`
 }
 
+type Role struct {
+	ID        *uuid.UUID     `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	Name      string         `gorm:"type:varchar(255);not null"`
+	CreatedAt time.Time      `gorm:"type:timestamp;not null"`
+	UpdatedAt time.Time      `gorm:"type:timestamp;not null"`
+	DeletedAt gorm.DeletedAt `gorm:"type:timestamp;null"`
+}
+
 // SignUpInput is the request payload for user signup
 type SignUpInput struct {
 	Name            string `json:"name" validate:"required" title:"Name"`
@@ -60,11 +68,4 @@ func FilterUserRecord(user *User) UserResponse {
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
-}
-
-// ErrorResponse is the response payload for error response
-type ErrorResponse struct {
-	FailedField string `json:"failed_field"`
-	Tag         string `json:"tag"`
-	Value       string `json:"value,omitempty"`
 }

@@ -1,6 +1,6 @@
 import { Avatar } from '@chakra-ui/react';
-import ProtectedRoute from '../components/protected-route';
-import { useAuth } from '../hooks/auth';
+import ProtectedRoute from '../../components/protected-route';
+import { useAuth } from '../../hooks/auth';
 
 export default function Profile() {
   const user = useAuth().user();

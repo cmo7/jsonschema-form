@@ -1,32 +1,22 @@
 package initializers
 
 import (
+	"example/json-schema/lib/fronttypesgenerator"
 	"example/json-schema/models"
-	"os"
 
-	"github.com/tkrajina/typescriptify-golang-structs/typescriptify"
+	"github.com/gofiber/fiber/v2"
 )
 
+// GenerateFrontTypes generates typescript models from Go models
 func GenerateFrontTypes() {
+	// Add models here
+	fronttypesgenerator.RegisterModel(models.UserResponse{})
+	fronttypesgenerator.RegisterModel(models.LogInInput{})
+	fronttypesgenerator.RegisterModel(models.SignUpInput{})
+	fronttypesgenerator.RegisterModel(models.ErrorResponse{})
+	fronttypesgenerator.RegisterModel(fiber.Route{})
 
-	path := "../front/src/types/generated"
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.Mkdir(path, 0755)
-	}
-
-	converter := typescriptify.New().
-		WithInterface(true).
-		WithBackupDir("").
-
-		// Add models here
-		Add(models.UserResponse{}).
-		Add(models.LogInInput{}).
-		Add(models.SignUpInput{}).
-		Add(models.ErrorResponse{})
-
-	err := converter.ConvertToFile(path + "/models.ts")
-	if err != nil {
-		panic(err.Error())
-	}
+	path := Config.Generate.FrontTypesPath
+	fronttypesgenerator.GenerateFrontTypes(path)
 
 }

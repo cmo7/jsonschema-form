@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"example/json-schema/initializers"
-	"example/json-schema/models"
 	"fmt"
 	"os"
 	"strings"
@@ -11,23 +10,29 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func DeserializeUser(c *fiber.Ctx) error {
+// ValidateToken middleware validates JWT token and adds its claims to context
+func ValidateToken(c *fiber.Ctx) error {
 	var tokenString string
-	authorization := c.Get("Authorization")
 
+	jwtConfig := initializers.Config.Jwt
+
+	// Parse Authorization header
+	authorization := c.Get("Authorization")
 	if strings.HasPrefix(authorization, "Bearer ") {
 		tokenString = strings.Split(authorization, " ")[1]
 	} else if c.Cookies("token") != "" {
 		tokenString = c.Cookies("token")
 	}
 
+	// If token is not present
 	if tokenString == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  "error",
-			"message": "Unauthorized",
+			"message": "No token provided",
 		})
 	}
 
+	// Parse token
 	tokenByte, err := jwt.Parse(tokenString, func(jwtToken *jwt.Token) (interface{}, error) {
 		if _, ok := jwtToken.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", jwtToken.Header["alg"])
@@ -35,7 +40,6 @@ func DeserializeUser(c *fiber.Ctx) error {
 
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
-
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  "error",
@@ -43,6 +47,7 @@ func DeserializeUser(c *fiber.Ctx) error {
 		})
 	}
 
+	// Validate token
 	claims, ok := tokenByte.Claims.(jwt.MapClaims)
 	if !ok || !tokenByte.Valid {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -51,17 +56,23 @@ func DeserializeUser(c *fiber.Ctx) error {
 		})
 	}
 
-	var user models.User
-	initializers.DB.First(&user, "id = ?", fmt.Sprint(claims["sub"]))
-
-	if user.ID == nil || user.ID.String() == "" {
+	if claims["sub"] == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  "error",
 			"message": "Unauthorized",
 		})
 	}
 
-	c.Locals("user", models.FilterUserRecord(&user))
+	if claims["iss"] == nil || claims["iss"].(string) != jwtConfig.Issuer {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Unauthorized",
+		})
+	}
 
+	// Add claims to context
+	c.Locals("claims", claims)
+
+	// continue stack
 	return c.Next()
 }

@@ -3,7 +3,6 @@ package controllers
 import (
 	"example/json-schema/initializers"
 	"example/json-schema/models"
-	"os"
 	"strings"
 	"time"
 
@@ -121,16 +120,24 @@ func LogInUser(c *fiber.Ctx) error {
 	}
 	// Return success response, including the user (filtered)
 
+	// Create JWT
+
+	// Get the config for the JWT
+	tokenConfig := initializers.Config.Jwt
+
 	tokenByte := jwt.New(jwt.SigningMethodHS256)
 	now := time.Now().UTC()
 	claims := tokenByte.Claims.(jwt.MapClaims)
 
+	claims["iss"] = tokenConfig.Issuer
 	claims["sub"] = user.ID
-	claims["exp"] = now.Add(time.Hour).Unix()
+	claims["exp"] = now.Add(tokenConfig.Expiration).Unix()
 	claims["iat"] = now.Unix()
 	claims["nbf"] = now.Unix()
 
-	tokenString, err := tokenByte.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	claims["role"] = user.Role
+
+	tokenString, err := tokenByte.SignedString([]byte(tokenConfig.Secret))
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -143,7 +150,7 @@ func LogInUser(c *fiber.Ctx) error {
 		Name:     "token",
 		Value:    tokenString,
 		Path:     "/",
-		MaxAge:   3600,
+		MaxAge:   int(tokenConfig.MaxAge.Seconds()),
 		HTTPOnly: true,
 		Domain:   "localhost",
 	})

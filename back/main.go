@@ -4,6 +4,7 @@ import (
 	"example/json-schema/initializers"
 	"example/json-schema/routes"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,9 +24,9 @@ const (
 )
 
 func init() {
-
 	initializers.LoadConfig(development)
 	initializers.ConnectToDataBase()
+	initializers.InitializeApp()
 
 	generate := initializers.Config.Generate
 	if generate.AutoMigrate {
@@ -38,27 +39,21 @@ func init() {
 }
 
 func main() {
+	config := initializers.Config
 	// Create App
-	app := fiber.New(fiber.Config{
-		AppName: initializers.Config.AppName,
-	})
+	app := initializers.App
 
-	// Register Middleware
-	if initializers.Config.Logger.MainLogger {
+	// Register App Middleware
+	if config.Logger.MainLogger {
 		app.Use(logger.New())
 	}
-
-	midlewareConfig := initializers.Config.Middleware
-
-	if midlewareConfig.Helmet {
+	if config.Middleware.Helmet {
 		app.Use(helmet.New())
 	}
-
-	if midlewareConfig.Compress {
+	if config.Middleware.Compress {
 		app.Use(compress.New())
 	}
-
-	if midlewareConfig.Cache {
+	if config.Middleware.Cache {
 		app.Use(cache.New())
 	}
 
@@ -72,41 +67,38 @@ func main() {
 			"X-Requested-With",
 		}, ","),
 		AllowOrigins: strings.Join([]string{
-			initializers.Config.Client.URL,
+			config.Client.URL,
 		}, ","),
 	}))
 
 	// Client Serving Mode
-	switch initializers.Config.Client.Mode {
+	switch config.Client.Mode {
 	case "internal":
-		app.Static("/", "./public").Name("public")
+		app.Static("/", "./public").Name("Serving Client (Internal)")
 	case "external":
 		app.Get("/", func(c *fiber.Ctx) error {
-			return c.Redirect(initializers.Config.Client.URL)
-		})
+			return c.Redirect(config.Client.URL)
+		}).Name("Client Redirect (External)")
 	default:
 		panic("CLIENT_MODE not defined or invalid")
 	}
 
-	// Static Routes
-
 	// Add Routes
-	routes.AddRoutes(app)
+	routes.AddApiRoutes(app)
 
 	// Run Server
-
-	webConfig := initializers.Config.WebServer
+	webConfig := config.WebServer
 	portString := fmt.Sprintf(":%d", webConfig.Port)
 
-	if initializers.Config.WebServer.TLS {
+	if webConfig.TLS {
 		err := app.ListenTLS(portString, webConfig.CertFile, webConfig.KeyFile)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	} else {
 		err := app.Listen(portString)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	}
 

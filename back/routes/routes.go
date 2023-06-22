@@ -7,39 +7,26 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func AddRoutes(app *fiber.App) {
+func AddApiRoutes(app *fiber.App) {
 
 	api := app.Group("/api")
 
 	// Health Check
-	api.Get("/healthcheck", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"status":  "success",
-			"message": "Server is running",
-		})
-	})
+	api.Get("/healthcheck", controllers.HealthCheck).Name("Health Check")
 
-	api.Get("/schema/:schemaName", controllers.GetSchema).Name("userSchema")
-	// User Routes
-	authRoutes(&api)
-	userRoutes(&api)
-}
+	// Json Schemas for Forms Routes
+	api.Get("/schema/:schemaName", controllers.GetSchema).Name("Get Json Form Schema")
 
-func authRoutes(api *fiber.Router) {
-	router := *api
-	auth := router.Group("/auth")
-	auth.Post("/register", controllers.SignUpUser).Name("signUpUser")
-	auth.Post("/login", controllers.LogInUser).Name("logInUser")
-	auth.Get("/logout", controllers.LogOutUser).Name("logOutUser")
-	auth.Get("/getCurrentUser", middleware.DeserializeUser, controllers.GetCurrentUser).Name("getCurrentUser")
-}
+	// Auth Routes
+	auth := api.Group("/auth")
+	auth.Post("/register", controllers.SignUpUser).Name("Register User")
+	auth.Post("/login", controllers.LogInUser).Name("Login User")
+	auth.Get("/logout", controllers.LogOutUser).Name("Logout User")
+	// Token required auth routes
+	authProtected := auth.Group("/", middleware.ValidateToken)
+	authProtected.Use(middleware.DeserializeUser).Get("/getCurrentUser", controllers.GetCurrentUser).Name("Get User Corresponding to Token")
 
-func userRoutes(api *fiber.Router) {
-	router := *api
-	user := router.Group("/user")
-	// Auxiliar Routes
-
-	user.Get("/:id", controllers.GetUser).Name("getUser")
-	user.Get("/", controllers.GetAllUsers).Name("getUsers")
-
+	administration := api.Group("/administration").Use(middleware.ValidateToken).Use(middleware.OnlyAdmin)
+	administration.Get("/config", controllers.GetServerConfiguration).Name("Get App Configuration")
+	administration.Get("/routes", controllers.GetAllRoutes).Name("Get Routes List")
 }

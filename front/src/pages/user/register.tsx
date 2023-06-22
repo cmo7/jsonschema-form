@@ -4,13 +4,14 @@ import validator from '@rjsf/validator-ajv8';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { sendForm } from '../api/auth-requests';
-import { endpoints } from '../api/endpoints';
-import { getSchema } from '../api/form-schema-requests';
-import { useAuth } from '../hooks/auth';
-import { customWidgets } from '../rjsf-config/widgets';
-import { ApiResponse } from '../types/api-response';
-import { SignUpInput, UserResponse } from '../types/generated/models';
+
+import { sendForm } from '../../api/auth-requests';
+import { endpoints } from '../../api/endpoints';
+import { getSchema } from '../../api/form-schema-requests';
+import { useAuth } from '../../hooks/auth';
+import { customWidgets } from '../../rjsf-config/widgets';
+import { ApiResponse } from '../../types/api-response';
+import { SignUpInput, UserResponse } from '../../types/generated/models';
 import { Loading } from './loading';
 
 const uiSchema: UiSchema = {
@@ -54,7 +55,7 @@ export default function Register() {
     }
   }, [auth, navigate]);
 
-  const registerSchema = useQuery('schema', async () => getSchema('SiginInput'));
+  const registerSchema = useQuery('schema', async () => getSchema('SignUpInput'));
 
   if (registerSchema.isLoading) return <Loading />;
   if (mutation.isLoading) return <Loading />;
