@@ -1,6 +1,7 @@
 package initializers
 
 import (
+	"example/json-schema/config"
 	"example/json-schema/lib/fronttypesgenerator"
 	"example/json-schema/models"
 
@@ -16,7 +17,7 @@ func GenerateFrontTypes() {
 	fronttypesgenerator.RegisterModel(models.ErrorResponse{})
 	fronttypesgenerator.RegisterModel(fiber.Route{})
 
-	path := Config.Generate.FrontTypesPath
+	path := config.Options.Generate.FrontTypesPath
 	fronttypesgenerator.GenerateFrontTypes(path)
 
 }

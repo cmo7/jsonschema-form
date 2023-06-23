@@ -1,18 +1,14 @@
 package main
 
 import (
+	"example/json-schema/app"
+	"example/json-schema/config"
+	"example/json-schema/database"
 	"example/json-schema/initializers"
+	lib "example/json-schema/lib/banners"
 	"example/json-schema/routes"
 	"fmt"
 	"log"
-	"strings"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cache"
-	"github.com/gofiber/fiber/v2/middleware/compress"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/helmet"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 // Enviroments
@@ -24,71 +20,29 @@ const (
 )
 
 func init() {
-	initializers.LoadConfig(development)
-	initializers.ConnectToDataBase()
-	initializers.InitializeApp()
+	config.LoadConfig(development)
+	database.ConnectToDataBase()
 
-	generate := initializers.Config.Generate
+	generate := config.Options.Generate
 	if generate.AutoMigrate {
-		initializers.SyncDataBase()
+		log.Print(lib.BoxBanner("Sincronizando Base de Datos"))
+		database.SyncDataBase()
 	}
 	if generate.FrontTypes {
+		log.Print(lib.BoxBanner("Generando Tipos de Datos"))
 		initializers.GenerateFrontTypes()
 	}
+	log.Print(lib.BoxBanner("Generando Schemas de Formularios"))
 	initializers.GenerateJsonFormSchemas()
 }
 
 func main() {
-	config := initializers.Config
+	config := config.Options
 	// Create App
-	app := initializers.App
+	app := app.BootstrapApp(config)
 
-	// Register App Middleware
-	if config.Logger.MainLogger {
-		app.Use(logger.New())
-	}
-	if config.Middleware.Helmet {
-		app.Use(helmet.New())
-	}
-	if config.Middleware.Compress {
-		app.Use(compress.New())
-	}
-	if config.Middleware.Cache {
-		app.Use(cache.New())
-	}
-
-	app.Use(cors.New(cors.Config{
-		AllowHeaders: strings.Join([]string{
-			"Origin",
-			"Content-Type",
-			"Accept",
-			"Access-Control-Allow-Headers",
-			"Authorization",
-			"X-Requested-With",
-		}, ","),
-		AllowOrigins: strings.Join([]string{
-			config.Client.URL,
-		}, ","),
-	}))
-
-	// Client Serving Mode
-	switch config.Client.Mode {
-	case "internal":
-		app.Static("/", "./public").Name("Serving Client (Internal)")
-	case "external":
-		app.Get("/", func(c *fiber.Ctx) error {
-			return c.Redirect(config.Client.URL)
-		}).Name("Client Redirect (External)")
-	default:
-		panic("CLIENT_MODE not defined or invalid")
-	}
-
-	// Redirect to Client
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Redirect(os.Getenv("CLIENT_URL"))
-	})
-	// Add Routes
-	routes.AddApiRoutes(app)
+	// Mount API App Routes
+	app.Mount("/api", routes.ApiRoutes())
 
 	// Run Server
 	webConfig := config.WebServer

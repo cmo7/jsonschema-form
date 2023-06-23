@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"example/json-schema/initializers"
+	"example/json-schema/database"
 	"example/json-schema/models"
 	"fmt"
 
@@ -15,7 +15,7 @@ func DeserializeUser(c *fiber.Ctx) error {
 	claims := c.Locals("claims").(jwt.MapClaims)
 	// Find user
 	var user models.User
-	initializers.DB.First(&user, "id = ?", fmt.Sprint(claims["sub"]))
+	database.DB.First(&user, "id = ?", fmt.Sprint(claims["sub"]))
 
 	// If user is not present
 	if user.ID == nil || user.ID.String() == "" {

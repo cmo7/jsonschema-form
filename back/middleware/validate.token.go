@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"example/json-schema/initializers"
+	"example/json-schema/config"
 	"fmt"
 	"os"
 	"strings"
@@ -14,7 +14,7 @@ import (
 func ValidateToken(c *fiber.Ctx) error {
 	var tokenString string
 
-	jwtConfig := initializers.Config.Jwt
+	jwtConfig := config.Options.Jwt
 
 	// Parse Authorization header
 	authorization := c.Get("Authorization")

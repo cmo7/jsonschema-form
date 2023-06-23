@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"example/json-schema/initializers"
+	"example/json-schema/database"
 	"example/json-schema/models"
 	"log"
 
@@ -17,7 +17,7 @@ func GetUser(c *fiber.Ctx) error {
 		})
 	}
 	var user = new(models.User)
-	initializers.DB.First(&user, "id = ?", id)
+	database.DB.First(&user, "id = ?", id)
 	if user.ID == nil || user.ID.String() == "" {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": fiber.ErrNotFound.Message,
@@ -59,9 +59,9 @@ func GetAllUsers(c *fiber.Ctx) error {
 	offset := (page - 1) * pageSize
 
 	var users []models.User
-	initializers.DB.Limit(pageSize).Offset(offset).Find(&users)
+	database.DB.Limit(pageSize).Offset(offset).Find(&users)
 	var count int64
-	initializers.DB.Model(&users).Count(&count)
+	database.DB.Model(&users).Count(&count)
 
 	log.Println("page: ", page)
 	log.Println("pageSize: ", pageSize)

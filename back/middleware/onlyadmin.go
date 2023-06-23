@@ -1,7 +1,9 @@
 package middleware
 
 import (
-	"log"
+	"example/json-schema/database"
+	"example/json-schema/models"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
@@ -10,7 +12,6 @@ import (
 func OnlyAdmin(c *fiber.Ctx) error {
 
 	if c.Locals("claims") == nil {
-		log.Printf("no Claims")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  "error",
 			"message": "Unauthorized (no claims)",
@@ -18,8 +19,16 @@ func OnlyAdmin(c *fiber.Ctx) error {
 	}
 
 	claims := c.Locals("claims").(jwt.MapClaims)
-	if claims["role"] != "admin" {
-		log.Printf("Role: %s", claims["role"])
+	var user models.User
+	result := database.DB.First(&user, "id = ?", fmt.Sprint(claims["sub"]))
+	if result.Error != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Unauthorized",
+		})
+	}
+
+	if user.Role != "admin" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  "error",
 			"message": "Unauthorized (not admin)",

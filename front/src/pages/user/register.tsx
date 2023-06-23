@@ -46,6 +46,7 @@ export default function Register() {
     },
     onError: (error) => {
       console.log(error, 'error');
+      navigate('/');
     },
   });
 
@@ -74,6 +75,8 @@ export default function Register() {
       onChange={(e) => {
         setFormData(e.formData);
       }}
+      liveValidate
+      noHtml5Validate
     />
   );
 }
