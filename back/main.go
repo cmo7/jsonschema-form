@@ -1,55 +1,53 @@
 package main
 
 import (
-	"example/json-schema/app"
-	"example/json-schema/config"
-	"example/json-schema/database"
-	"example/json-schema/initializers"
-	lib "example/json-schema/lib/banners"
-	"example/json-schema/routes"
 	"fmt"
 	"log"
-)
-
-// Enviroments
-const (
-	development   = "development"
-	preproduction = "preproduction"
-	production    = "production"
-	container     = "container"
+	"nartex/ngr-stack/app"
+	"nartex/ngr-stack/app/routes"
+	"nartex/ngr-stack/codegen"
+	"nartex/ngr-stack/config"
+	"nartex/ngr-stack/database"
+	"nartex/ngr-stack/database/seeders"
+	"os/exec"
 )
 
 func init() {
-	config.LoadConfig(development)
+	config.LoadConfig()
 	database.ConnectToDataBase()
 
-	generate := config.Options.Generate
-	if generate.AutoMigrate {
-		log.Print(lib.BoxBanner("Sincronizando Base de Datos"))
+	if config.Generate.AutoMigrate {
+		//banners.Print("Sincronizando Base de Datos")
 		database.SyncDataBase()
 	}
-	if generate.FrontTypes {
-		log.Print(lib.BoxBanner("Generando Tipos de Datos"))
-		initializers.GenerateFrontTypes()
+	if config.Generate.FrontTypes {
+		//banners.Print("Generando Tipos de Datos")
+		//codegen.GenerateFrontTypes()
+		cmd := exec.Command("tygo", "generate")
+		if err := cmd.Run(); err != nil {
+			fmt.Println("Error: ", err)
+		}
 	}
-	log.Print(lib.BoxBanner("Generando Schemas de Formularios"))
-	initializers.GenerateJsonFormSchemas()
+	//banners.Print("Generando Schemas de Formularios")
+	codegen.GenerateJsonFormSchemas()
+
+	if config.Debug.DatabaseSeed {
+		seeders.Seed()
+	}
 }
 
 func main() {
-	config := config.Options
 	// Create App
-	app := app.BootstrapApp(config)
+	app := app.BootstrapApp()
 
 	// Mount API App Routes
 	app.Mount("/api", routes.ApiRoutes())
 
 	// Run Server
-	webConfig := config.WebServer
-	portString := fmt.Sprintf(":%d", webConfig.Port)
+	portString := fmt.Sprintf(":%d", config.WebServer.Port)
 
-	if webConfig.TLS {
-		err := app.ListenTLS(portString, webConfig.CertFile, webConfig.KeyFile)
+	if config.WebServer.TLS {
+		err := app.ListenTLS(portString, config.WebServer.CertFile, config.WebServer.KeyFile)
 		if err != nil {
 			log.Fatal(err)
 		}

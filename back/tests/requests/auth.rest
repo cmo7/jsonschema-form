@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "name": "user",
-    "email": "user3@mail.com",
+    "email": "user50@mail.com",
     "password": "password",
     "password_confirm": "password",
     "avatar": "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
@@ -15,7 +15,7 @@ POST https://localhost:8443/api/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "email": "user3@mail.com",
+    "email": "user50@mail.com",
     "password": "password"
 }
 

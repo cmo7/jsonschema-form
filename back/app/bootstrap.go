@@ -1,7 +1,8 @@
 package app
 
 import (
-	"example/json-schema/config"
+	"fmt"
+	"nartex/ngr-stack/config"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,31 +15,36 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func BootstrapApp(options *config.ConfigOptions) *fiber.App {
+func BootstrapApp() *fiber.App {
 
-	app := fiber.New()
+	appNameString := fmt.Sprintf("%s (%s)", config.App.AppName, config.App.Enviroment)
+	app := fiber.New(fiber.Config{
+		AppName: appNameString,
+	})
 
-	// Initialize default config
+	fmt.Printf("App Name: %s\n", appNameString)
 
 	// No panics, just recover
-	app.Use(recover.New())
+	if config.App.Enviroment == config.Production {
+		app.Use(recover.New())
+	}
 
 	// Register App Middleware
-	if options.Logger.MainLogger {
+	if config.Logger.MainLogger {
 		app.Use(logger.New())
 	}
-	if options.Middleware.Helmet {
+	if config.Middleware.Helmet {
 		app.Use(helmet.New())
 	}
-	if options.Middleware.Compress {
+	if config.Middleware.Compress {
 		app.Use(compress.New())
 	}
-	if options.Middleware.Cache {
+	if config.Middleware.Cache {
 		app.Use(cache.New())
 	}
 
 	// Client Serving Mode
-	switch options.Client.Mode {
+	switch config.Client.Mode {
 	case config.Internal:
 		// Serve internal client from public folder
 		app.Static("/", "./public").Name("Serving Client (Internal)")
@@ -55,7 +61,7 @@ func BootstrapApp(options *config.ConfigOptions) *fiber.App {
 		}, ", ")
 
 		allowOrigins := strings.Join([]string{
-			options.Client.URL,
+			config.Client.URL,
 		}, ", ")
 
 		app.Use(cors.New(cors.Config{
@@ -64,13 +70,13 @@ func BootstrapApp(options *config.ConfigOptions) *fiber.App {
 		}))
 		// Redirect to external client
 		app.Get("/", func(c *fiber.Ctx) error {
-			return c.Redirect(options.Client.URL)
+			return c.Redirect(config.Client.URL)
 		}).Name("Client Redirect (External)")
 	default:
 		panic("CLIENT_MODE not defined or invalid")
 	}
 	// Add DevTools
-	if options.DevTools {
+	if config.Debug.DevTools {
 		app.Get("/metrics", monitor.New()).Name("Fiber Metrics")
 	}
 

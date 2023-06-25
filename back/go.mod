@@ -1,4 +1,4 @@
-module example/json-schema
+module nartex/ngr-stack
 
 go 1.19
 
@@ -7,6 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.47.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
+	github.com/jaswdr/faker v1.18.0
 	github.com/joho/godotenv v1.5.1
 	github.com/swaggest/jsonschema-go v0.3.52
 	github.com/tkrajina/typescriptify-golang-structs v0.1.10

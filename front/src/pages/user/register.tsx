@@ -1,5 +1,4 @@
 import Form from '@rjsf/chakra-ui';
-import { UiSchema } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
@@ -7,31 +6,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { sendForm } from '../../api/auth-requests';
 import { endpoints } from '../../api/endpoints';
-import { getSchema } from '../../api/form-schema-requests';
+import { getSchema, getUiSchema } from '../../api/form-schema-requests';
 import { useAuth } from '../../hooks/auth';
 import { customWidgets } from '../../rjsf-config/widgets';
 import { ApiResponse } from '../../types/api-response';
 import { SignUpInput, UserResponse } from '../../types/generated/models';
 import { Loading } from './loading';
-
-const uiSchema: UiSchema = {
-  email: {
-    'ui:widget': 'email',
-  },
-  password: {
-    'ui:widget': 'password',
-  },
-  password_confirm: {
-    'ui:widget': 'password',
-  },
-  avatar: {
-    'ui:widget': 'file',
-    'ui:options': {
-      accept: 'image/*',
-      filePreview: true,
-    },
-  },
-};
 
 export default function Register() {
   const auth = useAuth();
@@ -57,14 +37,15 @@ export default function Register() {
   }, [auth, navigate]);
 
   const registerSchema = useQuery('schema', async () => getSchema('SignUpInput'));
+  const uiSchema = useQuery('uiSchema', async () => getUiSchema('SignUpInput'));
 
-  if (registerSchema.isLoading) return <Loading />;
+  if (registerSchema.isLoading || uiSchema.isLoading) return <Loading />;
   if (mutation.isLoading) return <Loading />;
 
   return (
     <Form
       schema={registerSchema.data}
-      uiSchema={uiSchema}
+      uiSchema={uiSchema.data}
       validator={validator}
       formData={formData}
       widgets={customWidgets}
