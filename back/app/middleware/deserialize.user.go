@@ -18,7 +18,7 @@ func DeserializeUser(c *fiber.Ctx) error {
 	database.DB.First(&user, "id = ?", fmt.Sprint(claims["sub"]))
 
 	// If user is not present
-	if user.ID == nil || user.ID.String() == "" {
+	if user.ID.String() == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  "error",
 			"message": "Unauthorized",

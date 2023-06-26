@@ -17,7 +17,7 @@ func init() {
 
 // User is the model for the user table
 type User struct {
-	ID        *uuid.UUID     `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	ID        uuid.UUID      `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
 	Name      string         `gorm:"type:varchar(255);not null"`
 	Email     string         `gorm:"type:varchar(255);not null;unique"`
 	Password  string         `gorm:"type:varchar(255);not null"`
@@ -34,13 +34,13 @@ func (user *User) Validate() []*validation.ErrorResponse {
 	return validation.ValidateStruct(user)
 }
 
-func (user *User) ToDto() UserResponse {
-	filteredRoles := make([]RoleResponse, len(user.Roles))
+func (user *User) ToDto() UserDTO {
+	filteredRoles := make([]RoleDto, len(user.Roles))
 	for i, role := range user.Roles {
-		filteredRoles[i] = FilterRoleRecord(&role)
+		filteredRoles[i] = role.ToDto().(RoleDto)
 	}
-	return UserResponse{
-		ID:        *user.ID,
+	return UserDTO{
+		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
 		Avatar:    user.Avatar,
@@ -49,6 +49,10 @@ func (user *User) ToDto() UserResponse {
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
+}
+
+func (user *User) GetId() uuid.UUID {
+	return user.ID
 }
 
 // SignUpInput is the request payload for user signup
@@ -71,27 +75,27 @@ type LogInInput struct {
 	Password string `json:"password" validate:"required,min=8" title:"Password" widget:"password"`
 }
 
-// UserResponse is the response payload for the user model
-type UserResponse struct {
-	ID        uuid.UUID      `json:"id,omitempty" ts_type:"string" ts_transform:"__VALUE__.toString()"`
-	Name      string         `json:"name,omitempty"`
-	Email     string         `json:"email,omitempty"`
-	Avatar    string         `json:"avatar,omitempty"`
-	Roles     []RoleResponse `json:"roles,omitempty" ts_type:"Role[]" ts_transform:"__VALUE__.map((role: Role) => role.Name.toString())"`
-	Provider  string         `json:"provider,omitempty"`
-	CreatedAt time.Time      `json:"created,omitempty" ts_type:"Date" ts_transform:"new Date(__VALUE__)"`
-	UpdatedAt time.Time      `json:"updated,omitempty" ts_type:"Date" ts_transform:"new Date(__VALUE__)"`
+// UserDTO is the response payload for the user model
+type UserDTO struct {
+	ID        uuid.UUID `json:"id,omitempty" ts_type:"string" ts_transform:"__VALUE__.toString()"`
+	Name      string    `json:"name,omitempty"`
+	Email     string    `json:"email,omitempty"`
+	Avatar    string    `json:"avatar,omitempty"`
+	Roles     []RoleDto `json:"roles,omitempty" ts_type:"Role[]" ts_transform:"__VALUE__.map((role: Role) => role.Name.toString())"`
+	Provider  string    `json:"provider,omitempty"`
+	CreatedAt time.Time `json:"created,omitempty" ts_type:"Date" ts_transform:"new Date(__VALUE__)"`
+	UpdatedAt time.Time `json:"updated,omitempty" ts_type:"Date" ts_transform:"new Date(__VALUE__)"`
 }
 
 // FilterUserRecord is a function to convert the user model to user response payload
-func FilterUserRecord(user *User) UserResponse {
+func FilterUserRecord(user *User) UserDTO {
 
-	filteredRoles := make([]RoleResponse, len(user.Roles))
+	filteredRoles := make([]RoleDto, len(user.Roles))
 	for i, role := range user.Roles {
-		filteredRoles[i] = FilterRoleRecord(&role)
+		filteredRoles[i] = role.ToDto().(RoleDto)
 	}
-	return UserResponse{
-		ID:        *user.ID,
+	return UserDTO{
+		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
 		Avatar:    user.Avatar,
