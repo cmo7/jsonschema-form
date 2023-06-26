@@ -2,6 +2,7 @@ package models
 
 import (
 	"nartex/ngr-stack/database"
+	"nartex/ngr-stack/utils/validation"
 	"time"
 
 	"github.com/google/uuid"
@@ -29,6 +30,27 @@ type User struct {
 	Roles []Role `gorm:"many2many:user_roles;"`
 }
 
+func (user *User) Validate() []*validation.ErrorResponse {
+	return validation.ValidateStruct(user)
+}
+
+func (user *User) ToDto() UserResponse {
+	filteredRoles := make([]RoleResponse, len(user.Roles))
+	for i, role := range user.Roles {
+		filteredRoles[i] = FilterRoleRecord(&role)
+	}
+	return UserResponse{
+		ID:        *user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		Avatar:    user.Avatar,
+		Roles:     filteredRoles,
+		Provider:  user.Provider,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+}
+
 // SignUpInput is the request payload for user signup
 // As the model represents a form in the frontend, the json tags are used to generate the form
 // The validate tags are used to validate the input
@@ -40,7 +62,7 @@ type SignUpInput struct {
 	Email           string `json:"email" validate:"required,email" title:"Email" widget:"email"`
 	Password        string `json:"password" validate:"required,min=8" title:"Password" widget:"password"`
 	PasswordConfirm string `json:"password_confirm" validate:"required,min=8,eqfield=Password" title:"Password Confirm" widget:"password"`
-	Avatar          string `json:"avatar" title:"Avatar" widget:"file" options:"accept:image/*,filePreview:true"`
+	Avatar          string `json:"avatar" title:"Avatar" widget:"file" options:"accept:image/*,filePreview:false"`
 }
 
 // LogInInput is the request payload for user login

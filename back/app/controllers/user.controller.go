@@ -6,6 +6,7 @@ import (
 	"nartex/ngr-stack/app/types"
 	"nartex/ngr-stack/database"
 	"nartex/ngr-stack/services/data"
+	"nartex/ngr-stack/utils/validation"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -56,13 +57,12 @@ func userGet(c *fiber.Ctx) error {
 		JSON(types.NewResponseBody[models.UserResponse](
 			types.Success,
 			"User found",
-			models.FilterUserRecord(user),
+			user.ToDto(),
 		))
 }
 
 // TODO: Add filters
 func userGetAll(c *fiber.Ctx) error {
-	log.Println("userGetAll")
 	// Parse query parameters
 	page, size, err := pageParams(c)
 	if err != nil {
@@ -95,7 +95,7 @@ func userGetAll(c *fiber.Ctx) error {
 	var usersResponse []models.UserResponse
 	for x, user := range users {
 		log.Println("user", x, " -> ", user)
-		usersResponse = append(usersResponse, models.FilterUserRecord(&user))
+		usersResponse = append(usersResponse, user.ToDto())
 	}
 
 	return c.Status(fiber.StatusOK).
@@ -122,7 +122,7 @@ func userCreate(c *fiber.Ctx) error {
 				types.Empty{},
 			))
 	}
-	err := models.ValidateStruct(payload)
+	err := validation.ValidateStruct(payload)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(types.NewResponseBody(
@@ -166,7 +166,7 @@ func userUpdate(c *fiber.Ctx) error {
 				types.Empty{},
 			))
 	}
-	err := models.ValidateStruct(payload)
+	err := validation.ValidateStruct(payload)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(types.NewResponseBody(
