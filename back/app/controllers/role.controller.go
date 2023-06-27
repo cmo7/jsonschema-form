@@ -11,7 +11,7 @@ import (
 // without contaminating the package namespace with handlers
 
 var RoleController = NewStandardCrudController[models.Role](
-	NewCrudControllerOptions{
+	CrudControllerOptions{
 		Locale:             i18n.ES,
 		ResourceName:       "Role",
 		ResourceSlug:       "role",

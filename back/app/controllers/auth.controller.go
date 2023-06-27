@@ -22,15 +22,15 @@ var Auth struct {
 }
 
 func init() {
-	Auth.LogIn = LogInUser
-	Auth.SignUp = SignUpUser
-	Auth.LogOut = LogOutUser
-	Auth.RefreshAccessToken = RefreshAccessToken
-	Auth.GetCurrentUser = GetCurrentUser
+	Auth.LogIn = logInUser
+	Auth.SignUp = signUpUser
+	Auth.LogOut = logOutUser
+	Auth.RefreshAccessToken = refreshAccessToken
+	Auth.GetCurrentUser = getCurrentUser
 }
 
 // SignInUser signs in a user. Recibes a request with a body payload in the form of a SignInInput struct
-func SignUpUser(c *fiber.Ctx) error {
+func signUpUser(c *fiber.Ctx) error {
 	var payload models.SignUpInput
 
 	// Parse Body into payload (SignInInput struct)
@@ -109,9 +109,9 @@ func SignUpUser(c *fiber.Ctx) error {
 	})
 }
 
-// LogInUser logs in a user. Recibes a request with a body payload in the form of a LogInInput struct
+// logInUser logs in a user. Recibes a request with a body payload in the form of a LogInInput struct
 // If the user is found and the password is correct, it returns a JWT token
-func LogInUser(c *fiber.Ctx) error {
+func logInUser(c *fiber.Ctx) error {
 	var payload models.LogInInput
 
 	// Parse Body
@@ -171,8 +171,8 @@ func LogInUser(c *fiber.Ctx) error {
 	})
 }
 
-// RefreshAccessToken refreshes the JWT token. This is a protected route, so it requires a valid JWT token, so it requires the ValidateToken middleware
-func RefreshAccessToken(c *fiber.Ctx) error {
+// refreshAccessToken refreshes the JWT token. This is a protected route, so it requires a valid JWT token, so it requires the ValidateToken middleware
+func refreshAccessToken(c *fiber.Ctx) error {
 	if c.Locals("claims") == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  "error",
@@ -212,9 +212,9 @@ func RefreshAccessToken(c *fiber.Ctx) error {
 	})
 }
 
-// LogOutUser logs out a user. Recibes a request with a body payload in the form of a LogInInput struct
+// logOutUser logs out a user. Recibes a request with a body payload in the form of a LogInInput struct
 // Clears the JWT token cookie (expires it)
-func LogOutUser(c *fiber.Ctx) error {
+func logOutUser(c *fiber.Ctx) error {
 	expired := time.Now().Add(-time.Hour * 24) // Set cookie expiration date to yesterday
 	c.Cookie(&fiber.Cookie{
 		Name:    "token",
@@ -228,8 +228,8 @@ func LogOutUser(c *fiber.Ctx) error {
 	})
 }
 
-// GetCurrentUser returns the current user. This is a protected route, so it requires using the DeserializeUser middleware
-func GetCurrentUser(c *fiber.Ctx) error {
+// getCurrentUser returns the current user. This is a protected route, so it requires using the DeserializeUser middleware
+func getCurrentUser(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.UserDTO)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status": "success",

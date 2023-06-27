@@ -2,6 +2,7 @@ package models
 
 import (
 	"nartex/ngr-stack/database"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -27,6 +28,7 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"type:timestamp;null"`
 	// Relationships
 	Roles []Role `gorm:"many2many:user_roles;"`
+	Posts []Post `gorm:"hasMany"`
 }
 
 func (user *User) Validate() []*ErrorResponse {
@@ -52,6 +54,10 @@ func (user *User) ToDto() UserDTO {
 
 func (user *User) GetId() uuid.UUID {
 	return user.ID
+}
+
+func (user *User) Matches(query string) bool {
+	return strings.Contains(user.Name, query) || strings.Contains(user.Email, query)
 }
 
 // SignUpInput is the request payload for user signup

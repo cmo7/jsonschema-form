@@ -47,4 +47,8 @@ func Seed() {
 		DefaultForNewUsers: true,
 	})
 	database.DB.Create(newUserRole)
+
+	// Create posts
+	posts := factories.PostFactory{}.CreateMany(1)
+	database.DB.Create(&posts)
 }

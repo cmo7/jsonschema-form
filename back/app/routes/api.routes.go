@@ -23,6 +23,7 @@ func ApiRoutes() *fiber.App {
 	api.Mount("/api-info", apiInfoRoutes())
 	api.Mount("/user", userRoutes())
 	api.Mount("/role", roleRoutes())
+	api.Mount("/post", postRoutes())
 
 	return api
 }

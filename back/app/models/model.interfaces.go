@@ -5,16 +5,23 @@ import (
 	"github.com/google/uuid"
 )
 
+// Models that implement this interface can be converted to DTOs
 type Dtoable interface {
 	ToDto() interface{}
 }
 
+// Models that implement this interface can be identified by an UUID
 type Identifiable interface {
 	GetId() uuid.UUID
 }
 
+// Models that implement this interface can be validated using tags
 type Validable interface {
 	Validate() []*ErrorResponse
+}
+
+type Searchable interface {
+	Matches(query string) bool
 }
 
 // ErrorResponse is the response payload for error response

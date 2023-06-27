@@ -2,10 +2,8 @@ package controllers
 
 import (
 	"nartex/ngr-stack/app/models"
-	"nartex/ngr-stack/config"
 	"nartex/ngr-stack/database"
 	"nartex/ngr-stack/i18n"
-	"nartex/ngr-stack/services/data"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -31,8 +29,6 @@ var UserController struct {
 }
 
 func init() {
-	UserController.Locale = config.App.Locale
-
 	UserController.GetAll = userGetAll
 	UserController.Get = userGet
 	UserController.Create = userCreate
@@ -75,7 +71,6 @@ func userGet(c *fiber.Ctx) error {
 		))
 }
 
-// TODO: Add filters
 func userGetAll(c *fiber.Ctx) error {
 	// Parse query parameters
 	page, size, err := pageParams(c)
@@ -103,7 +98,9 @@ func userGetAll(c *fiber.Ctx) error {
 	}
 
 	// Count total registers
-	totalRegisters := data.Count(&models.User{})
+	var totalRegistersI64 int64
+	database.DB.Model(&models.User{}).Count(&totalRegistersI64)
+	totalRegisters := int(totalRegistersI64)
 
 	// Filter users to response and create pagea
 	var usersResponse []models.UserDTO
@@ -112,10 +109,10 @@ func userGetAll(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).
-		JSON(NewResponseBody[*models.Page[models.UserDTO]](
+		JSON(NewResponseBody[*Page[models.UserDTO]](
 			SuccessStatus,
 			i18n.GetWithValue(UserController.Locale, i18n.FOUND, "Users"),
-			models.NewPage[models.UserDTO](
+			NewPage[models.UserDTO](
 				usersResponse,
 				page,
 				size,
@@ -124,7 +121,6 @@ func userGetAll(c *fiber.Ctx) error {
 		))
 }
 
-// Todo: Implement this method
 func userCreate(c *fiber.Ctx) error {
 	var payload models.SignUpInput
 	if err := c.BodyParser(&payload); err != nil {
