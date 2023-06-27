@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ApiView } from './pages/admin-pages';
 import { Error404, Login, Profile, Register, UserRoot } from './pages/user-pages';
 import { AuthProvider } from './providers/auth-context';
+import theme from './theme';
 
 const router = createBrowserRouter([
   {
@@ -48,7 +49,7 @@ const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
         </QueryClientProvider>

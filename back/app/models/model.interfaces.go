@@ -1,6 +1,17 @@
-package validation
+package models
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
+)
+
+type Dtoable interface {
+	ToDto() interface{}
+}
+
+type Identifiable interface {
+	GetId() uuid.UUID
+}
 
 type Validable interface {
 	Validate() []*ErrorResponse

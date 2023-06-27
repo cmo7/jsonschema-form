@@ -8,7 +8,7 @@ import (
 func GetAllRoutes(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).
 		JSON(NewResponseBody[[]fiber.Route](
-			Success,
+			SuccessStatus,
 			"Server is running",
 			c.App().GetRoutes(true),
 		))

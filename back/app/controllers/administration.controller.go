@@ -10,7 +10,7 @@ import (
 func GetServerConfiguration(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).
 		JSON(NewResponseBody[fiber.Map](
-			Success,
+			SuccessStatus,
 			"Server is running",
 			fiber.Map{
 				"App":        config.App,

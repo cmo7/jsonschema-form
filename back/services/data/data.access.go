@@ -29,7 +29,7 @@ func GetPage[M any](model M, page int, size int) []M {
 	return result
 }
 
-func Count[R any](model R) int {
+func Count[R interface{}](model R) int {
 	var total int64
 	database.DB.Model(&model).Count(&total)
 	total32 := int(total)

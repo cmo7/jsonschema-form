@@ -1,6 +1,9 @@
 package config
 
-import "time"
+import (
+	"nartex/ngr-stack/i18n"
+	"time"
+)
 
 type EnviromentType string // "local" | "development" | "preproduction" | "production" | "container"
 const (
@@ -75,6 +78,7 @@ type JwtOptions struct {
 type AppOptions struct {
 	Enviroment string
 	AppName    string
+	Locale     i18n.Locale
 }
 
 type DebugOptions struct {

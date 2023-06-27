@@ -1,6 +1,7 @@
 package config
 
 import (
+	"nartex/ngr-stack/i18n"
 	"os"
 	"strconv"
 	"time"
@@ -119,4 +120,12 @@ func getEnviroment(key string, defaultValue EnviromentType) string {
 		return string(defaultValue)
 	}
 	return s
+}
+
+func getEnvLocale(key string, defaultValue i18n.Locale) i18n.Locale {
+	s := os.Getenv(key)
+	if s == "" {
+		return defaultValue
+	}
+	return i18n.Locale(s)
 }

@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"log"
 	"nartex/ngr-stack/app/models"
+	"nartex/ngr-stack/config"
 	"nartex/ngr-stack/database"
+	"nartex/ngr-stack/i18n"
 	"nartex/ngr-stack/services/data"
-	"nartex/ngr-stack/utils/validation"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -14,6 +14,8 @@ import (
 // and we initialize it in the init function
 // This way we can use the handlers in the routes
 // without contaminating the package namespace with handlers
+
+var Locale i18n.Locale
 var User struct {
 	GetAll fiber.Handler
 	Get    fiber.Handler
@@ -23,6 +25,7 @@ var User struct {
 }
 
 func init() {
+	Locale = config.App.Locale
 	User.GetAll = userGetAll
 	User.Get = userGet
 	User.Create = userCreate
@@ -36,9 +39,9 @@ func userGet(c *fiber.Ctx) error {
 
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
-				Error,
-				"id is required",
-				Empty{},
+				ErrorStatus,
+				i18n.GetWithValue(Locale, i18n.REQUIRED, "id"),
+				EmptyBody{},
 			))
 	}
 	var user = new(models.User)
@@ -46,15 +49,15 @@ func userGet(c *fiber.Ctx) error {
 	if user.ID.String() == "" {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
-				Error,
-				"User not found",
-				Empty{},
+				ErrorStatus,
+				i18n.GetWithValue(Locale, i18n.NOT_FOUND, "User"),
+				EmptyBody{},
 			))
 	}
 
 	return c.Status(fiber.StatusOK).
 		JSON(NewResponseBody[models.UserDTO](
-			Success,
+			SuccessStatus,
 			"User found",
 			user.ToDto(),
 		))
@@ -67,9 +70,9 @@ func userGetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
-				Error,
+				ErrorStatus,
 				err.Error(),
-				Empty{},
+				EmptyBody{},
 			))
 	}
 
@@ -81,9 +84,9 @@ func userGetAll(c *fiber.Ctx) error {
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).
 			JSON(NewResponseBody(
-				Error,
+				ErrorStatus,
 				result.Error.Error(),
-				Empty{},
+				EmptyBody{},
 			))
 	}
 
@@ -92,15 +95,14 @@ func userGetAll(c *fiber.Ctx) error {
 
 	// Filter users to response and create pagea
 	var usersResponse []models.UserDTO
-	for x, user := range users {
-		log.Println("user", x, " -> ", user)
+	for _, user := range users {
 		usersResponse = append(usersResponse, user.ToDto())
 	}
 
 	return c.Status(fiber.StatusOK).
 		JSON(NewResponseBody[*models.Page[models.UserDTO]](
-			Success,
-			"Users found",
+			SuccessStatus,
+			i18n.GetWithValue(Locale, i18n.FOUND, "Users"),
 			models.NewPage[models.UserDTO](
 				usersResponse,
 				page,
@@ -116,18 +118,18 @@ func userCreate(c *fiber.Ctx) error {
 	if err := c.BodyParser(&payload); err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
-				Error,
+				ErrorStatus,
 				err.Error(),
-				Empty{},
+				EmptyBody{},
 			))
 	}
-	err := validation.ValidateStruct(payload)
+	err := payload.Validate()
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
-				Error,
+				ErrorStatus,
 				fiber.ErrBadRequest.Message,
-				Empty{},
+				EmptyBody{},
 			))
 	}
 
@@ -150,9 +152,9 @@ func userUpdate(c *fiber.Ctx) error {
 
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
-				Error,
-				"id is required",
-				Empty{},
+				ErrorStatus,
+				i18n.GetWithValue(Locale, i18n.REQUIRED, "id"),
+				EmptyBody{},
 			))
 	}
 
@@ -160,18 +162,18 @@ func userUpdate(c *fiber.Ctx) error {
 	if err := c.BodyParser(&payload); err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
-				Error,
+				ErrorStatus,
 				err.Error(),
-				Empty{},
+				EmptyBody{},
 			))
 	}
-	err := validation.ValidateStruct(payload)
+	err := payload.Validate()
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
-				Error,
+				ErrorStatus,
 				fiber.ErrBadRequest.Message,
-				Empty{},
+				EmptyBody{},
 			))
 	}
 
@@ -180,9 +182,9 @@ func userUpdate(c *fiber.Ctx) error {
 	if user.ID.String() == "" {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
-				Error,
-				"User not found",
-				Empty{},
+				ErrorStatus,
+				i18n.GetWithValue(Locale, i18n.NOT_FOUND, "User"),
+				EmptyBody{},
 			))
 	}
 
@@ -201,9 +203,9 @@ func userDelete(c *fiber.Ctx) error {
 	if id == "" {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
-				Error,
-				"id is required",
-				Empty{},
+				ErrorStatus,
+				i18n.GetWithValue(Locale, i18n.REQUIRED, "id"),
+				EmptyBody{},
 			))
 	}
 
@@ -212,9 +214,9 @@ func userDelete(c *fiber.Ctx) error {
 	if user.ID.String() == "" {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
-				Error,
-				"User not found",
-				Empty{},
+				ErrorStatus,
+				i18n.GetWithValue(Locale, i18n.NOT_FOUND, "User"),
+				EmptyBody{},
 			))
 	}
 

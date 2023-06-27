@@ -2,7 +2,6 @@ package models
 
 import (
 	"nartex/ngr-stack/database"
-	"nartex/ngr-stack/utils/validation"
 	"time"
 
 	"github.com/google/uuid"
@@ -46,6 +45,6 @@ func (role Role) GetId() uuid.UUID {
 	return role.ID
 }
 
-func (role Role) Validate() []*validation.ErrorResponse {
-	return validation.ValidateStruct(role)
+func (role Role) Validate() []*ErrorResponse {
+	return ValidateStruct(role)
 }

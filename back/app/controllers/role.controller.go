@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"nartex/ngr-stack/app/models"
+	"nartex/ngr-stack/i18n"
 )
 
 // We create a struct to hold the handlers
@@ -11,6 +12,7 @@ import (
 
 var RoleController = NewCrudController[models.Role](
 	NewCrudControllerOptions{
+		Locale:             i18n.ES,
 		ResourceName:       "Role",
 		ResourceSlug:       "role",
 		ResourcePluralName: "Roles",

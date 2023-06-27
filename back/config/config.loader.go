@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"nartex/ngr-stack/i18n"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -46,6 +47,7 @@ func LoadConfig() {
 	App = &AppOptions{
 		Enviroment: getEnvStr("ENVIROMENT", "development"),
 		AppName:    getEnvStr("APP_NAME", "Nartex Go App"),
+		Locale:     getEnvLocale("LOCALE", i18n.EN),
 	}
 
 	Database = &DatabaseOptions{

@@ -2,7 +2,6 @@ package models
 
 import (
 	"nartex/ngr-stack/database"
-	"nartex/ngr-stack/utils/validation"
 	"time"
 
 	"github.com/google/uuid"
@@ -30,8 +29,8 @@ type User struct {
 	Roles []Role `gorm:"many2many:user_roles;"`
 }
 
-func (user *User) Validate() []*validation.ErrorResponse {
-	return validation.ValidateStruct(user)
+func (user *User) Validate() []*ErrorResponse {
+	return ValidateStruct(user)
 }
 
 func (user *User) ToDto() UserDTO {
@@ -69,10 +68,18 @@ type SignUpInput struct {
 	Avatar          string `json:"avatar" title:"Avatar" widget:"file" options:"accept:image/*,filePreview:false"`
 }
 
+func (signup SignUpInput) Validate() []*ErrorResponse {
+	return ValidateStruct(signup)
+}
+
 // LogInInput is the request payload for user login
 type LogInInput struct {
 	Email    string `json:"email" validate:"required,email" title:"Email" widget:"email"`
 	Password string `json:"password" validate:"required,min=8" title:"Password" widget:"password"`
+}
+
+func (login LogInInput) Validate() []*ErrorResponse {
+	return ValidateStruct(login)
 }
 
 // UserDTO is the response payload for the user model

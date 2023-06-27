@@ -5,7 +5,6 @@ import (
 	"nartex/ngr-stack/app/models"
 	"nartex/ngr-stack/database"
 	"nartex/ngr-stack/utils/jwthelper"
-	"nartex/ngr-stack/utils/validation"
 	"strings"
 	"time"
 
@@ -42,7 +41,7 @@ func SignUpUser(c *fiber.Ctx) error {
 		})
 	}
 	// Validate payload using its tags using the ValidateStruct function
-	errors := validation.ValidateStruct(payload)
+	errors := payload.Validate()
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  "error",
@@ -123,7 +122,7 @@ func LogInUser(c *fiber.Ctx) error {
 		})
 	}
 	// Validate payload using its tags
-	errors := validation.ValidateStruct(payload)
+	errors := models.ValidateStruct(payload)
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  "error",
