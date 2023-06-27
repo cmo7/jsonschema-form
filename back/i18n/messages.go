@@ -20,6 +20,11 @@ var Dictionary = DictionaryType{
 		UPDATED:              "%s actualizado",
 		NOT_DELETED:          "%s no eliminado",
 		DELETED:              "%s eliminado",
+		GET_ALL:              "obtener todos los %s",
+		GET:                  "obtener %s",
+		CREATE:               "crear %s",
+		UPDATE:               "actualizar %s",
+		DELETE:               "eliminar %s",
 	},
 	EN: {
 		REQUIRED:             "%s is required",
@@ -32,6 +37,11 @@ var Dictionary = DictionaryType{
 		UPDATED:              "%s updated",
 		NOT_DELETED:          "%s not deleted",
 		DELETED:              "%s deleted",
+		GET_ALL:              "get all %s",
+		GET:                  "get %s",
+		CREATE:               "create %s",
+		UPDATE:               "update %s",
+		DELETE:               "delete %s",
 	},
 }
 

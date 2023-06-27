@@ -219,9 +219,9 @@ type NewCrudControllerOptions struct {
 	ResourcePluralSlug string
 }
 
-// NewCrudController creates a new CrudController instance for the given resource
+// NewStandardCrudController creates a new CrudController instance for the given resource
 // T is the resource type, it must implement the Validable interface and the Dtoable interface
-func NewCrudController[T Resource](options NewCrudControllerOptions) DefaultCrudController[T] {
+func NewStandardCrudController[T Resource](options NewCrudControllerOptions) DefaultCrudController[T] {
 	return DefaultCrudController[T](options)
 }
 

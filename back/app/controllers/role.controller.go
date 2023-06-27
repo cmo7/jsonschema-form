@@ -10,7 +10,7 @@ import (
 // This way we can use the handlers in the routes
 // without contaminating the package namespace with handlers
 
-var RoleController = NewCrudController[models.Role](
+var RoleController = NewStandardCrudController[models.Role](
 	NewCrudControllerOptions{
 		Locale:             i18n.ES,
 		ResourceName:       "Role",

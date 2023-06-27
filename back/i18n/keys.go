@@ -13,4 +13,9 @@ const (
 	UPDATED              MessageKey = "updated"
 	NOT_DELETED          MessageKey = "notDeleted"
 	DELETED              MessageKey = "deleted"
+	GET_ALL              MessageKey = "getAll"
+	GET                  MessageKey = "get"
+	CREATE               MessageKey = "create"
+	UPDATE               MessageKey = "update"
+	DELETE               MessageKey = "delete"
 )

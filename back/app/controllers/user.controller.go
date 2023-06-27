@@ -15,8 +15,14 @@ import (
 // This way we can use the handlers in the routes
 // without contaminating the package namespace with handlers
 
-var Locale i18n.Locale
-var User struct {
+var UserController struct {
+	Locale i18n.Locale
+
+	ResourceName       string
+	ResourceSlug       string
+	ResourcePluralName string
+	ResourcePluralSlug string
+
 	GetAll fiber.Handler
 	Get    fiber.Handler
 	Create fiber.Handler
@@ -25,12 +31,18 @@ var User struct {
 }
 
 func init() {
-	Locale = config.App.Locale
-	User.GetAll = userGetAll
-	User.Get = userGet
-	User.Create = userCreate
-	User.Update = userUpdate
-	User.Delete = userDelete
+	UserController.Locale = config.App.Locale
+
+	UserController.GetAll = userGetAll
+	UserController.Get = userGet
+	UserController.Create = userCreate
+	UserController.Update = userUpdate
+	UserController.Delete = userDelete
+
+	UserController.ResourceName = "User"
+	UserController.ResourceSlug = "user"
+	UserController.ResourcePluralName = "Users"
+	UserController.ResourcePluralSlug = "users"
 }
 
 func userGet(c *fiber.Ctx) error {
@@ -40,7 +52,7 @@ func userGet(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(Locale, i18n.REQUIRED, "id"),
+				i18n.GetWithValue(UserController.Locale, i18n.REQUIRED, "id"),
 				EmptyBody{},
 			))
 	}
@@ -50,7 +62,7 @@ func userGet(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(Locale, i18n.NOT_FOUND, "User"),
+				i18n.GetWithValue(UserController.Locale, i18n.NOT_FOUND, "User"),
 				EmptyBody{},
 			))
 	}
@@ -102,7 +114,7 @@ func userGetAll(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).
 		JSON(NewResponseBody[*models.Page[models.UserDTO]](
 			SuccessStatus,
-			i18n.GetWithValue(Locale, i18n.FOUND, "Users"),
+			i18n.GetWithValue(UserController.Locale, i18n.FOUND, "Users"),
 			models.NewPage[models.UserDTO](
 				usersResponse,
 				page,
@@ -153,7 +165,7 @@ func userUpdate(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(Locale, i18n.REQUIRED, "id"),
+				i18n.GetWithValue(UserController.Locale, i18n.REQUIRED, "id"),
 				EmptyBody{},
 			))
 	}
@@ -183,7 +195,7 @@ func userUpdate(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(Locale, i18n.NOT_FOUND, "User"),
+				i18n.GetWithValue(UserController.Locale, i18n.NOT_FOUND, "User"),
 				EmptyBody{},
 			))
 	}
@@ -204,7 +216,7 @@ func userDelete(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(Locale, i18n.REQUIRED, "id"),
+				i18n.GetWithValue(UserController.Locale, i18n.REQUIRED, "id"),
 				EmptyBody{},
 			))
 	}
@@ -215,7 +227,7 @@ func userDelete(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(Locale, i18n.NOT_FOUND, "User"),
+				i18n.GetWithValue(UserController.Locale, i18n.NOT_FOUND, "User"),
 				EmptyBody{},
 			))
 	}
