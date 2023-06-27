@@ -12,7 +12,7 @@ import (
 // GenerateFrontTypes generates typescript models from Go models
 func GenerateFrontTypes() {
 	// Add models here
-	fronttypesgenerator.RegisterModel(models.UserResponse{})
+	fronttypesgenerator.RegisterModel(models.UserDTO{})
 	fronttypesgenerator.RegisterModel(models.LogInInput{})
 	fronttypesgenerator.RegisterModel(models.SignUpInput{})
 	fronttypesgenerator.RegisterModel(fiber.Route{})

@@ -11,7 +11,7 @@ func GenerateJsonFormSchemas() {
 	// The name will be used as the key for the schema
 	// The value will be the model itself
 	// Keys are used to retrieve the schema later
-	jsonschemasgenerator.RegisterModel("UserResponse", models.UserResponse{})
+	jsonschemasgenerator.RegisterModel("UserResponse", models.UserDTO{})
 	jsonschemasgenerator.RegisterModel("LogInInput", models.LogInInput{})
 	jsonschemasgenerator.RegisterModel("SignUpInput", models.SignUpInput{})
 

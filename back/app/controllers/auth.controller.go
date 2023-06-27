@@ -231,7 +231,7 @@ func LogOutUser(c *fiber.Ctx) error {
 
 // GetCurrentUser returns the current user. This is a protected route, so it requires using the DeserializeUser middleware
 func GetCurrentUser(c *fiber.Ctx) error {
-	user := c.Locals("user").(models.UserResponse)
+	user := c.Locals("user").(models.UserDTO)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status": "success",
 		"data":   user,

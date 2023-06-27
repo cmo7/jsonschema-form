@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"nartex/ngr-stack/app/types"
 	"nartex/ngr-stack/config"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,8 +9,8 @@ import (
 // Returns the server configuration. This route should be protected by a token and only accessible by an admin user.
 func GetServerConfiguration(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).
-		JSON(types.NewResponseBody[fiber.Map](
-			types.Success,
+		JSON(NewResponseBody[fiber.Map](
+			Success,
 			"Server is running",
 			fiber.Map{
 				"App":        config.App,
