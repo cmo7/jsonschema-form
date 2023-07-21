@@ -11,7 +11,7 @@ func (UserFactory) CreateOne() *models.User {
 		Name:     Faker.Person().Name(),
 		Email:    Faker.Internet().Email(),
 		Password: Faker.Internet().Password(),
-		Avatar:   "https://i.pravatar.cc/300",
+		Avatar:   "https://i.pravatar.cc/300?u=" + Faker.UUID().V4(),
 		Provider: "local",
 	}
 	return &user

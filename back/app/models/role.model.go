@@ -2,10 +2,8 @@ package models
 
 import (
 	"nartex/ngr-stack/database"
-	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 func init() {
@@ -15,36 +13,37 @@ func init() {
 }
 
 type Role struct {
-	ID                 uuid.UUID      `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	Name               string         `gorm:"type:varchar(255);not null;unique"`
-	DefaultForNewUsers bool           `gorm:"type:boolean;not null;default:false"`
-	CreatedAt          time.Time      `gorm:"type:timestamp;not null"`
-	UpdatedAt          time.Time      `gorm:"type:timestamp;not null"`
-	DeletedAt          gorm.DeletedAt `gorm:"type:timestamp;null"`
+	ID uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	baseEntity
+	Name               string `gorm:"type:varchar(255);not null;unique"`
+	DefaultForNewUsers bool   `gorm:"type:boolean;not null;default:false"`
 	// Relationships
-	Users []User `gorm:"many2many:user_roles;"`
+	Users []*User `gorm:"many2many:user_roles;"`
 }
 
-type RoleDto struct {
-	ID        uuid.UUID `json:"id,omitempty" ts_type:"string" ts_transform:"__VALUE__.toString()"`
-	Name      string    `json:"name,omitempty"`
-	CreatedAt time.Time `json:"created,omitempty" ts_type:"Date" ts_transform:"new Date(__VALUE__)"`
-	UpdatedAt time.Time `json:"updated,omitempty" ts_type:"Date" ts_transform:"new Date(__VALUE__)"`
-}
-
-func (role Role) ToDto() interface{} {
-	return RoleDto{
-		ID:        role.ID,
-		Name:      role.Name,
-		CreatedAt: role.CreatedAt,
-		UpdatedAt: role.UpdatedAt,
-	}
+func (role Role) ToDto() DTO {
+	r := RoleDto{}
+	r.ID = role.ID
+	r.Name = role.Name
+	r.CreatedAt = role.CreatedAt
+	r.UpdatedAt = role.UpdatedAt
+	return r
 }
 
 func (role Role) GetId() uuid.UUID {
 	return role.ID
 }
 
-func (role Role) Validate() []*ErrorResponse {
-	return ValidateStruct(role)
+type RoleDto struct {
+	ID uuid.UUID `json:"id,omitempty"`
+	baseDTO
+	Name string `json:"name,omitempty"`
+}
+
+func (roleDto RoleDto) GetId() uuid.UUID {
+	return roleDto.ID
+}
+
+func (roleDto RoleDto) Validate() []*ErrorResponse {
+	return ValidateStruct(roleDto)
 }

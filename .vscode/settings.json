@@ -24,11 +24,11 @@
   // Regla "suave" a 80 caracteres, regla "dura" a 120 caracteres
   "editor.rulers": [
     {
-      "color": "#ffffff2f",
+      "color": "#26db5c6e",
       "column": 80
     },
     {
-      "color": "#ffffff9d",
+      "color": "#e8383b6e",
       "column": 120
     }
   ],
@@ -49,6 +49,7 @@
   "go.formatTool": "goimports",
   "go.useLanguageServer": true,
   "[go]": {
-    "editor.defaultFormatter": "golang.go"
+    "editor.defaultFormatter": "golang.go",
+    "editor.inlayHints.enabled": "on"
   }
 }

@@ -1,4 +1,4 @@
-### Register
+### Register a new user
 POST https://localhost:8443/api/auth/register HTTP/1.1
 Content-Type: application/json
 
@@ -10,7 +10,7 @@ Content-Type: application/json
     "avatar": "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
 }
 
-### Login
+### Login a user
 POST https://localhost:8443/api/auth/login HTTP/1.1
 Content-Type: application/json
 
@@ -19,7 +19,7 @@ Content-Type: application/json
     "password": "password"
 }
 
-### Logout
+### Logout a user
 GET https://localhost:8443/api/auth/logout HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODcyNzEwMzIsImlhdCI6MTY4NzI2NzQzMiwibmJmIjoxNjg3MjY3NDMyLCJzdWIiOiI4OWY0N2IxMi0yMTA2LTQxMmUtOWVhYy1jYjMwMjAzOGUxOGQifQ.jHYtwdEujx0FRy6L-x5QnDEf4KX0alscTf1ilBFcEec

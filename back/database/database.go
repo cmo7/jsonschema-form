@@ -9,8 +9,10 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+// DB is the database connection
 var DB *gorm.DB
 
+// ConnectToDataBase connects to the database using the config file
 func ConnectToDataBase() {
 	fmt.Println("Connecting to database")
 	// Select the database engine from the config file

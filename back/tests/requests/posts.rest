@@ -1,3 +1,2 @@
-###
-
+### Get all posts
 GET https://localhost:8443/api/post/ HTTP/1.1

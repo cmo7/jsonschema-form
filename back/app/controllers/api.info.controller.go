@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"nartex/ngr-stack/i18n"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -9,7 +11,7 @@ func GetAllRoutes(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).
 		JSON(NewResponseBody[[]fiber.Route](
 			SuccessStatus,
-			"Server is running",
+			i18n.S(i18n.FOUND, "routes"),
 			c.App().GetRoutes(true),
 		))
 }

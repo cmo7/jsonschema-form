@@ -3,3 +3,8 @@ GET https://localhost:8443/api/schema/SignUpInput HTTP/1.1
 
 ###
 GET https://localhost:8443/api/schema/ui/SignUpInput HTTP/1.1
+###
+GET https://localhost:8443/api/schema/LogInInput HTTP/1.1
+
+###
+GET https://localhost:8443/api/schema/ui/LogInInput HTTP/1.1

@@ -2,10 +2,8 @@ package models
 
 import (
 	"nartex/ngr-stack/database"
-	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 func init() {
@@ -15,29 +13,26 @@ func init() {
 }
 
 type Post struct {
-	ID        uuid.UUID      `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	Title     string         `gorm:"type:varchar(255);not null"`
-	Content   string         `gorm:"type:string;not null"`
-	CreatedAt time.Time      `gorm:"type:timestamp;not null"`
-	UpdatedAt time.Time      `gorm:"type:timestamp;not null"`
-	DeletedAt gorm.DeletedAt `gorm:"type:timestamp;null"`
+	ID uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	baseEntity
+	Title   string `gorm:"type:varchar(255);not null"`
+	Content string `gorm:"type:string;not null"`
 	// Relationships
-	User   User `gorm:"foreignKey:UserID"`
-	UserID uuid.UUID
+
+	// Belongs to User
+	// Both fields are required, UserID is the foreign key and User is the relationship
+	UserID uuid.UUID `gorm:"type:uuid;not null"`
+	User   User      `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-func (post Post) Validate() []*ErrorResponse {
-	return ValidateStruct(post)
-}
-
-func (post Post) ToDto() interface{} {
-	return PostDTO{
-		ID:        post.ID,
-		Title:     post.Title,
-		Content:   post.Content,
-		CreatedAt: post.CreatedAt,
-		UpdatedAt: post.UpdatedAt,
-	}
+func (post Post) ToDto() DTO {
+	p := PostDTO{}
+	p.ID = post.ID
+	p.Title = post.Title
+	p.Content = post.Content
+	p.CreatedAt = post.CreatedAt
+	p.UpdatedAt = post.UpdatedAt
+	return p
 }
 
 func (post Post) GetId() uuid.UUID {
@@ -50,9 +45,16 @@ func (post *Post) Matches(query string) bool {
 }
 
 type PostDTO struct {
-	ID        uuid.UUID `json:"id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID uuid.UUID `json:"id,omitempty"`
+	baseDTO
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
+func (postDTO PostDTO) GetId() uuid.UUID {
+	return postDTO.ID
+}
+
+func (postDTO PostDTO) Validate() []*ErrorResponse {
+	return ValidateStruct(postDTO)
 }

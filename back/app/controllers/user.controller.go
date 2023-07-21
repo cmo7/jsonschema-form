@@ -14,8 +14,6 @@ import (
 // without contaminating the package namespace with handlers
 
 var UserController struct {
-	Locale i18n.Locale
-
 	ResourceName       string
 	ResourceSlug       string
 	ResourcePluralName string
@@ -48,25 +46,25 @@ func userGet(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(UserController.Locale, i18n.REQUIRED, "id"),
-				EmptyBody{},
+				i18n.S(i18n.REQUIRED, "id"),
+				EmptyData{},
 			))
 	}
 	var user = new(models.User)
 	database.DB.First(&user, "id = ?", id)
-	if user.ID.String() == "" {
+	if user.ID.String() != id {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(UserController.Locale, i18n.NOT_FOUND, "User"),
-				EmptyBody{},
+				i18n.S(i18n.NOT_FOUND, "User"),
+				EmptyData{},
 			))
 	}
 
 	return c.Status(fiber.StatusOK).
 		JSON(NewResponseBody[models.UserDTO](
 			SuccessStatus,
-			"User found",
+			i18n.S(i18n.FOUND, "User"),
 			user.ToDto(),
 		))
 }
@@ -79,7 +77,7 @@ func userGetAll(c *fiber.Ctx) error {
 			JSON(NewResponseBody(
 				ErrorStatus,
 				err.Error(),
-				EmptyBody{},
+				EmptyData{},
 			))
 	}
 
@@ -93,7 +91,7 @@ func userGetAll(c *fiber.Ctx) error {
 			JSON(NewResponseBody(
 				ErrorStatus,
 				result.Error.Error(),
-				EmptyBody{},
+				EmptyData{},
 			))
 	}
 
@@ -103,16 +101,16 @@ func userGetAll(c *fiber.Ctx) error {
 	totalRegisters := int(totalRegistersI64)
 
 	// Filter users to response and create pagea
-	var usersResponse []models.UserDTO
+	var usersResponse []models.DTO
 	for _, user := range users {
 		usersResponse = append(usersResponse, user.ToDto())
 	}
 
 	return c.Status(fiber.StatusOK).
-		JSON(NewResponseBody[*Page[models.UserDTO]](
+		JSON(NewResponseBody[*Page](
 			SuccessStatus,
-			i18n.GetWithValue(UserController.Locale, i18n.FOUND, "Users"),
-			NewPage[models.UserDTO](
+			i18n.S(i18n.FOUND, "Users"),
+			NewPage(
 				usersResponse,
 				page,
 				size,
@@ -128,7 +126,7 @@ func userCreate(c *fiber.Ctx) error {
 			JSON(NewResponseBody(
 				ErrorStatus,
 				err.Error(),
-				EmptyBody{},
+				EmptyData{},
 			))
 	}
 	err := payload.Validate()
@@ -137,7 +135,7 @@ func userCreate(c *fiber.Ctx) error {
 			JSON(NewResponseBody(
 				ErrorStatus,
 				fiber.ErrBadRequest.Message,
-				EmptyBody{},
+				EmptyData{},
 			))
 	}
 
@@ -161,8 +159,8 @@ func userUpdate(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(UserController.Locale, i18n.REQUIRED, "id"),
-				EmptyBody{},
+				i18n.S(i18n.REQUIRED, "id"),
+				EmptyData{},
 			))
 	}
 
@@ -172,7 +170,7 @@ func userUpdate(c *fiber.Ctx) error {
 			JSON(NewResponseBody(
 				ErrorStatus,
 				err.Error(),
-				EmptyBody{},
+				EmptyData{},
 			))
 	}
 	err := payload.Validate()
@@ -181,7 +179,7 @@ func userUpdate(c *fiber.Ctx) error {
 			JSON(NewResponseBody(
 				ErrorStatus,
 				fiber.ErrBadRequest.Message,
-				EmptyBody{},
+				EmptyData{},
 			))
 	}
 
@@ -191,8 +189,8 @@ func userUpdate(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(UserController.Locale, i18n.NOT_FOUND, "User"),
-				EmptyBody{},
+				i18n.S(i18n.NOT_FOUND, "User"),
+				EmptyData{},
 			))
 	}
 
@@ -212,8 +210,8 @@ func userDelete(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(UserController.Locale, i18n.REQUIRED, "id"),
-				EmptyBody{},
+				i18n.S(i18n.REQUIRED, "id"),
+				EmptyData{},
 			))
 	}
 
@@ -223,8 +221,8 @@ func userDelete(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).
 			JSON(NewResponseBody(
 				ErrorStatus,
-				i18n.GetWithValue(UserController.Locale, i18n.NOT_FOUND, "User"),
-				EmptyBody{},
+				i18n.S(i18n.NOT_FOUND, "User"),
+				EmptyData{},
 			))
 	}
 

@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// DeserializeUser is a middleware that deserializes the user from the JWT and sets it in locals
 func DeserializeUser(c *fiber.Ctx) error {
 
 	// Get claims from context
@@ -26,7 +27,7 @@ func DeserializeUser(c *fiber.Ctx) error {
 	}
 
 	// Set user in locals
-	c.Locals("user", models.FilterUserRecord(&user))
+	c.Locals("user", user.ToDto())
 
 	// Continue
 	return c.Next()

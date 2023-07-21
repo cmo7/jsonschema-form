@@ -1,18 +1,43 @@
 import { ReactNode, createContext, useMemo } from 'react';
 import useLocalStorage from '../hooks/localstorage';
-import { UserResponse } from '../types/generated/models';
+import { UserDTO } from '../types/generated/models';
 
 export interface AuthData {
-  userData: UserResponse;
+  userData: UserDTO;
   token: string;
 }
 
 export type AuthContextType = {
+  /**
+   * The auth object stores the user data and the token.
+   */
   auth: AuthData | null;
-  user: () => UserResponse;
+  /**
+   * The user() function returns the user data from the auth object.
+   * @returns UserDTO
+   */
+  user: () => UserDTO;
+  /**
+   * The token() function returns the token from the auth object.
+   * @returns string
+   */
   token: () => string;
-  login: (token: string, user: UserResponse) => void;
+  /**
+   * The login() function receives a token and a user object and stores them in the auth object.
+   * @param token
+   * @param user
+   * @returns
+   */
+  login: (token: string, user: UserDTO) => void;
+  /**
+   * The logout() function removes the auth object from the local storage.
+   * @returns
+   */
   logout: () => void;
+  /**
+   * The isAuthenticated() function checks if the auth object is null or not.
+   * @returns boolean
+   */
   isAuthenticated: () => boolean;
 };
 
@@ -28,7 +53,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const value = useMemo(() => {
     return {
       auth,
-      login: (token: string, userData: UserResponse) => {
+      login: (token: string, userData: UserDTO) => {
         setAuth({
           userData: userData ? userData : null,
           token,

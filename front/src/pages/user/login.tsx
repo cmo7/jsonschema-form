@@ -1,34 +1,24 @@
-import Form from '@rjsf/chakra-ui';
-import { UiSchema } from '@rjsf/utils';
-import validator from '@rjsf/validator-ajv8';
-import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { Heading } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { sendForm } from '../../api/auth-requests';
 import { endpoints } from '../../api/endpoints';
-import { getSchema } from '../../api/form-schema-requests';
+import NgrForm from '../../components/ngr-form';
 import { useAuth } from '../../hooks/auth';
-import { customWidgets } from '../../rjsf-config/widgets';
+import useTitle from '../../hooks/title';
 import { ApiResponse } from '../../types/api-response';
-import { LogInInput, UserResponse } from '../../types/generated/models';
+import { LogInInput, UserDTO } from '../../types/generated/models';
 import { Loading } from './loading';
 
-const uiSchema: UiSchema = {
-  email: {
-    'ui:widget': 'email',
-  },
-  password: {
-    'ui:widget': 'password',
-  },
-};
-
 export default function Login() {
+  useTitle('Iniciar sesión');
   const auth = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<LogInInput>();
 
   type Response = ApiResponse<{
-    user: UserResponse;
+    user: UserDTO;
     token: string;
   }>;
 
@@ -49,30 +39,20 @@ export default function Login() {
     },
   });
 
-  useEffect(() => {
-    if (auth.isAuthenticated()) {
-      navigate('/');
-    }
-  }, [auth, navigate]);
-
-  const loginSchema = useQuery('schema', async () => getSchema('LogInInput'));
-
-  if (loginSchema.isLoading) return <Loading />;
-  if (loginSchema.isError) return <div>error</div>;
   if (mutation.isLoading) return <Loading />;
   return (
-    <Form
-      schema={loginSchema.data}
-      uiSchema={uiSchema}
-      validator={validator}
-      widgets={customWidgets}
-      formData={formData}
-      onSubmit={() => {
-        mutation.mutate(formData);
-      }}
-      onChange={(e) => {
-        setFormData(e.formData);
-      }}
-    />
+    <React.Fragment>
+      <Heading as="h1" size="xl" textAlign="center" my="10">
+        Iniciar sesión
+      </Heading>
+      <NgrForm
+        schemaName="LogInInput"
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={(data) => {
+          mutation.mutate(data);
+        }}
+      />
+    </React.Fragment>
   );
 }

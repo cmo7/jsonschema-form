@@ -86,7 +86,7 @@ func LoadConfig() {
 	}
 
 	Jwt = &JwtOptions{
-		Issuer:     getEnvStr("JWT_ISSUER", "Nartex Go App"),
+		Issuer:     getEnvStr("JWT_ISSUER", "Nartex"),
 		Secret:     getEnvStr("JWT_SECRET", "secret"),
 		Expiration: getEnvDuration("JWT_EXPIRATION", 24*time.Hour),
 		MaxAge:     getEnvDuration("JWT_MAX_AGE", 24*time.Hour),

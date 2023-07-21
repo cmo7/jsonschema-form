@@ -18,6 +18,10 @@
       "version": "detect"
     },
     "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./"
+      },
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
@@ -28,8 +32,9 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react-refresh", "@typescript-eslint", "react", "react-hooks", "storybook"],
+  "plugins": ["react-refresh", "@typescript-eslint", "react", "react-hooks", "storybook", "import"],
   "rules": {
+    "import/no-unresolved": "error",
     "import/named": "off",
     "import/no-named-as-default": "off",
     "react/react-in-jsx-scope": "off",

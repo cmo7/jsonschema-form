@@ -22,8 +22,8 @@ func ApiRoutes() *fiber.App {
 	api.Mount("/schema", schemaRoutes())
 	api.Mount("/api-info", apiInfoRoutes())
 	api.Mount("/user", userRoutes())
-	api.Mount("/role", roleRoutes())
-	api.Mount("/post", postRoutes())
+	api.Mount("/role", genericRoutes(controllers.RoleController))
+	api.Mount("/analytic", genericRoutes(controllers.AnalyticsController))
 
 	return api
 }

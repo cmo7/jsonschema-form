@@ -13,20 +13,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var Auth struct {
-	LogIn              fiber.Handler
-	SignUp             fiber.Handler
-	LogOut             fiber.Handler
-	RefreshAccessToken fiber.Handler
-	GetCurrentUser     fiber.Handler
+var AuthController struct {
+	LogIn              func() fiber.Handler
+	SignUp             func() fiber.Handler
+	LogOut             func() fiber.Handler
+	RefreshAccessToken func() fiber.Handler
+	GetCurrentUser     func() fiber.Handler
 }
 
 func init() {
-	Auth.LogIn = logInUser
-	Auth.SignUp = signUpUser
-	Auth.LogOut = logOutUser
-	Auth.RefreshAccessToken = refreshAccessToken
-	Auth.GetCurrentUser = getCurrentUser
+	AuthController.LogIn = func() fiber.Handler { return logInUser }
+	AuthController.SignUp = func() fiber.Handler { return signUpUser }
+	AuthController.LogOut = func() fiber.Handler { return logOutUser }
+	AuthController.RefreshAccessToken = func() fiber.Handler { return refreshAccessToken }
+	AuthController.GetCurrentUser = func() fiber.Handler { return getCurrentUser }
 }
 
 // SignInUser signs in a user. Recibes a request with a body payload in the form of a SignInInput struct
@@ -105,7 +105,7 @@ func signUpUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"status":  "success",
 		"message": "User created successfully",
-		"data":    models.FilterUserRecord(&newUser),
+		"data":    newUser.ToDto(),
 	})
 }
 
@@ -165,7 +165,7 @@ func logInUser(c *fiber.Ctx) error {
 		"status":  "success",
 		"message": "User logged in successfully",
 		"data": fiber.Map{
-			"user":  models.FilterUserRecord(&user),
+			"user":  user.ToDto(),
 			"token": tokenString,
 		},
 	})
@@ -206,7 +206,7 @@ func refreshAccessToken(c *fiber.Ctx) error {
 		"status":  "success",
 		"message": "Token refreshed successfully",
 		"data": fiber.Map{
-			"user":  models.FilterUserRecord(&user),
+			"user":  user.ToDto(),
 			"token": tokenString,
 		},
 	})

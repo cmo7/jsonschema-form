@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// RefreshAccessToken is a middleware that refreshes the access token and sets it in the response header
 func RefreshAccessToken(c *fiber.Ctx) error {
 
 	// Generate new token

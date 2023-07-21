@@ -17,10 +17,10 @@ func userRoutes() *fiber.App {
 	// Public routes, no token required
 	public := router.Group("/")
 	public.Get("/", controller.GetAll).
-		Name(i18n.GetWithValue(controller.Locale, i18n.GET_ALL, controller.ResourcePluralName))
+		Name(i18n.S(i18n.GET_ALL, controller.ResourcePluralName))
 
 	public.Get("/:id", controller.Get).
-		Name(i18n.GetWithValue(controller.Locale, i18n.GET, controller.ResourceName))
+		Name(i18n.S(i18n.GET, controller.ResourceName))
 
 	// Protected routes, token required, only admin
 	protected := router.Group("/").
@@ -28,13 +28,13 @@ func userRoutes() *fiber.App {
 		Use(middleware.OnlyAdmin)
 
 	protected.Post("/", controller.Create).
-		Name(i18n.GetWithValue(controller.Locale, i18n.CREATE, controller.ResourceName))
+		Name(i18n.S(i18n.CREATE, controller.ResourceName))
 
 	protected.Put("/:id", controller.Update).
-		Name(i18n.GetWithValue(controller.Locale, i18n.UPDATE, controller.ResourceName))
+		Name(i18n.S(i18n.UPDATE, controller.ResourceName))
 
 	protected.Delete("/:id", controller.Delete).
-		Name(i18n.GetWithValue(controller.Locale, i18n.DELETE, controller.ResourceName))
+		Name(i18n.S(i18n.DELETE, controller.ResourceName))
 
 	return router
 }

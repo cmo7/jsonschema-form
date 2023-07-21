@@ -2,6 +2,7 @@ package jsonschemasgenerator
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -11,17 +12,12 @@ import (
 var registeredModels = map[string]interface{}{}
 var jsonSchemas = map[string]jsonschema.Schema{}
 var uiSchemas = map[string]UiSchema{}
-var jsonSchemasReflected = false
-var uiSchemasReflected = false
 
 func RegisterModel(name string, model interface{}) {
 	registeredModels[name] = model
 }
 
 func GetSchema(name string) (interface{}, error) {
-	if !jsonSchemasReflected {
-		ReflectJsonSchemas()
-	}
 	schema, ok := jsonSchemas[name]
 	if ok {
 		return schema, nil
@@ -30,9 +26,6 @@ func GetSchema(name string) (interface{}, error) {
 }
 
 func GetUiSchema(name string) (interface{}, error) {
-	if !uiSchemasReflected {
-		ReflectUiSchemas()
-	}
 	schema, ok := uiSchemas[name]
 	if ok {
 		return schema, nil
@@ -49,8 +42,6 @@ func ReflectJsonSchemas() {
 		}
 		jsonSchemas[name] = schema
 	}
-
-	jsonSchemasReflected = true
 }
 
 // ReflectUiSchemas generates the uiSchemas for the registered models, using a custom tag
@@ -90,6 +81,8 @@ func ReflectUiSchemas() {
 				}
 			}
 		}
+		fmt.Printf("uiSchema for %s:\n", name)
+		fmt.Println(uiSchema)
 		uiSchemas[name] = uiSchema
 	}
 }

@@ -1,14 +1,18 @@
 package controllers
 
 import (
+	"nartex/ngr-stack/app/models"
 	"nartex/ngr-stack/database"
 	"nartex/ngr-stack/i18n"
 
 	"github.com/gofiber/fiber/v2"
 )
 
+// DefaultCrudController represents a controller able to do the standard CRUD operations
+// for a given resoruce Res.
+// Resources must implement the Resource interface
+// The DefaultCrudController has methods that RETURN handlers that can be used in the routes.
 type DefaultCrudController[Res Resource] struct {
-	Locale             i18n.Locale
 	ResourceName       string
 	ResourceSlug       string
 	ResourcePluralName string
@@ -16,7 +20,7 @@ type DefaultCrudController[Res Resource] struct {
 }
 
 // Function to create a GetAll handler for a given resource.
-func (imp *DefaultCrudController[Res]) GetAll() fiber.Handler {
+func (imp DefaultCrudController[Res]) GetAll() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// Parse query parameters
 		page, size, err := pageParams(c)
@@ -25,7 +29,7 @@ func (imp *DefaultCrudController[Res]) GetAll() fiber.Handler {
 				JSON(NewResponseBody(
 					ErrorStatus,
 					err.Error(),
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 
@@ -39,7 +43,7 @@ func (imp *DefaultCrudController[Res]) GetAll() fiber.Handler {
 				JSON(NewResponseBody(
 					ErrorStatus,
 					result.Error.Error(),
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 
@@ -50,16 +54,16 @@ func (imp *DefaultCrudController[Res]) GetAll() fiber.Handler {
 		totalRegisters := int(totalRegistersI64)
 
 		// Filter users to response and create pagea
-		var resourceResponse []interface{}
+		var resourceResponse []models.DTO
 		for _, resource := range resources {
 			resourceResponse = append(resourceResponse, resource.ToDto())
 		}
 
 		return c.Status(fiber.StatusOK).
-			JSON(NewResponseBody[*Page[interface{}]](
+			JSON(NewResponseBody[*Page](
 				SuccessStatus,
-				i18n.GetWithValue(imp.Locale, i18n.FOUND, imp.ResourcePluralName),
-				NewPage[interface{}](
+				i18n.S(i18n.FOUND, imp.ResourcePluralName),
+				NewPage(
 					resourceResponse,
 					page,
 					size,
@@ -70,7 +74,7 @@ func (imp *DefaultCrudController[Res]) GetAll() fiber.Handler {
 }
 
 // Generic Get One by Id implementation for Resource Res
-func (imp *DefaultCrudController[Res]) Get() fiber.Handler {
+func (imp DefaultCrudController[Res]) Get() fiber.Handler {
 	// Returns anonymous function parametriced as needed
 	return func(c *fiber.Ctx) error {
 		id := c.Params("id")
@@ -80,7 +84,7 @@ func (imp *DefaultCrudController[Res]) Get() fiber.Handler {
 				JSON(NewResponseBody(
 					ErrorStatus,
 					"id is required",
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 		var resource = new(Res)
@@ -90,23 +94,23 @@ func (imp *DefaultCrudController[Res]) Get() fiber.Handler {
 			return c.Status(fiber.StatusNotFound).
 				JSON(NewResponseBody(
 					ErrorStatus,
-					i18n.GetWithValue(imp.Locale, i18n.NOT_FOUND, imp.ResourceName),
-					EmptyBody{},
+					i18n.S(i18n.NOT_FOUND, imp.ResourceName),
+					EmptyData{},
 				))
 		}
 
 		return c.Status(fiber.StatusOK).
 			JSON(NewResponseBody[interface{}](
 				SuccessStatus,
-				i18n.GetWithValue(imp.Locale, i18n.FOUND, imp.ResourceName),
+				i18n.S(i18n.FOUND, imp.ResourceName),
 				content.ToDto(),
 			))
 	}
 }
 
-func (imp *DefaultCrudController[Res]) Create() fiber.Handler {
+func (imp DefaultCrudController[Res]) Create() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var payload Res
+		var payload models.DTO
 
 		// Parse body
 		if err := c.BodyParser(&payload); err != nil {
@@ -114,7 +118,7 @@ func (imp *DefaultCrudController[Res]) Create() fiber.Handler {
 				JSON(NewResponseBody(
 					ErrorStatus,
 					err.Error(),
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 
@@ -125,7 +129,7 @@ func (imp *DefaultCrudController[Res]) Create() fiber.Handler {
 				JSON(NewResponseBody(
 					ErrorStatus,
 					fiber.ErrBadRequest.Message,
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 
@@ -136,28 +140,28 @@ func (imp *DefaultCrudController[Res]) Create() fiber.Handler {
 				JSON(NewResponseBody(
 					ErrorStatus,
 					result.Error.Error(),
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 
 		return c.Status(fiber.StatusCreated).
 			JSON(NewResponseBody[interface{}](
 				SuccessStatus,
-				i18n.GetWithValue(imp.Locale, i18n.CREATED, imp.ResourceName),
-				payload.ToDto(),
+				i18n.S(i18n.CREATED, imp.ResourceName),
+				payload,
 			))
 	}
 }
 
-func (imp *DefaultCrudController[Res]) Update() fiber.Handler {
+func (imp DefaultCrudController[Res]) Update() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id := c.Params("id")
 		if id == "" {
 			return c.Status(fiber.StatusBadRequest).
 				JSON(NewResponseBody(
 					ErrorStatus,
-					i18n.GetWithValue(imp.Locale, i18n.REQUIRED, "id"),
-					EmptyBody{},
+					i18n.S(i18n.REQUIRED, "id"),
+					EmptyData{},
 				))
 		}
 
@@ -169,18 +173,18 @@ func (imp *DefaultCrudController[Res]) Update() fiber.Handler {
 				JSON(NewResponseBody(
 					ErrorStatus,
 					err.Error(),
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 
 		// Validate payload
-		err := payload.Validate()
+		err := payload.ToDto().Validate()
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).
 				JSON(NewResponseBody(
 					ErrorStatus,
 					fiber.ErrBadRequest.Message,
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 
@@ -192,8 +196,8 @@ func (imp *DefaultCrudController[Res]) Update() fiber.Handler {
 			return c.Status(fiber.StatusNotFound).
 				JSON(NewResponseBody(
 					ErrorStatus,
-					i18n.GetWithValue(imp.Locale, i18n.NOT_FOUND, imp.ResourceName),
-					EmptyBody{},
+					i18n.S(i18n.NOT_FOUND, imp.ResourceName),
+					EmptyData{},
 				))
 		}
 
@@ -203,28 +207,28 @@ func (imp *DefaultCrudController[Res]) Update() fiber.Handler {
 				JSON(NewResponseBody(
 					ErrorStatus,
 					result.Error.Error(),
-					EmptyBody{},
+					EmptyData{},
 				))
 		}
 
 		return c.Status(fiber.StatusOK).
 			JSON(NewResponseBody[interface{}](
 				SuccessStatus,
-				i18n.GetWithValue(imp.Locale, i18n.UPDATED, imp.ResourceName),
+				i18n.S(i18n.UPDATED, imp.ResourceName),
 				payload.ToDto(),
 			))
 	}
 }
 
-func (imp *DefaultCrudController[Res]) Delete() fiber.Handler {
+func (imp DefaultCrudController[Res]) Delete() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id := c.Params("id")
 		if id == "" {
 			return c.Status(fiber.StatusBadRequest).
 				JSON(NewResponseBody(
 					ErrorStatus,
-					i18n.GetWithValue(imp.Locale, i18n.REQUIRED, "id"),
-					EmptyBody{},
+					i18n.S(i18n.REQUIRED, "id"),
+					EmptyData{},
 				))
 		}
 
@@ -235,8 +239,8 @@ func (imp *DefaultCrudController[Res]) Delete() fiber.Handler {
 			return c.Status(fiber.StatusNotFound).
 				JSON(NewResponseBody(
 					ErrorStatus,
-					i18n.GetWithValue(imp.Locale, i18n.NOT_FOUND, imp.ResourceName),
-					EmptyBody{},
+					i18n.S(i18n.NOT_FOUND, imp.ResourceName),
+					EmptyData{},
 				))
 		}
 
@@ -245,15 +249,24 @@ func (imp *DefaultCrudController[Res]) Delete() fiber.Handler {
 			return c.Status(fiber.StatusInternalServerError).
 				JSON(NewResponseBody(
 					ErrorStatus,
-					i18n.GetWithValue(imp.Locale, i18n.NOT_DELETED, imp.ResourceName),
-					EmptyBody{},
+					i18n.S(i18n.NOT_DELETED, imp.ResourceName),
+					EmptyData{},
 				))
 		}
 		return c.Status(fiber.StatusOK).
 			JSON(NewResponseBody(
 				SuccessStatus,
-				i18n.GetWithValue(imp.Locale, i18n.DELETED, imp.ResourceName),
-				EmptyBody{},
+				i18n.S(i18n.DELETED, imp.ResourceName),
+				EmptyData{},
 			))
+	}
+}
+
+func (imp DefaultCrudController[Res]) GetOptions() CrudControllerOptions {
+	return CrudControllerOptions{
+		ResourceName:       imp.ResourceName,
+		ResourceSlug:       imp.ResourceSlug,
+		ResourcePluralName: imp.ResourcePluralName,
+		ResourcePluralSlug: imp.ResourcePluralSlug,
 	}
 }

@@ -1,13 +1,13 @@
 packages:
-  - path: "nartex/ngr-stack/app/models"
-    output_path: "../front/src/types/generated/models.ts"
-    indent: "  "
-    type_mappings:
-      uuid.UUID: "string /* uuid */"
-      time.Time: "string /* RFC3339 */"
-  - path: "nartex/ngr-stack/app/types"
-    output_path: "../front/src/types/generated/types.ts"
-    indent: "  "
-    type_mappings:
-      uuid.UUID: "string /* uuid */"
-      time.Time: "string /* RFC3339 */"
+    - path: "nartex/ngr-stack/app/models"
+      output_path: "../front/src/types/generated/models.ts"
+      indent: "  "
+      type_mappings:
+          uuid.UUID: "string /* uuid */"
+          time.Time: "string /* RFC3339 */"
+    - path: "nartex/ngr-stack/app/controllers"
+      output_path: "../front/src/types/generated/controllers.ts"
+      indent: "  "
+      type_mappings:
+          uuid.UUID: "string /* uuid */"
+          time.Time: "string /* RFC3339 */"

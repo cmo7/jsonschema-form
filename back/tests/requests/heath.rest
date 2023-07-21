@@ -1,10 +1,14 @@
-###
+### Check if the service is up and running
 GET https://localhost:8443/api/healthcheck HTTP/1.1
 
 
-###
+### Get all the routes
 GET https://localhost:8443/api/administration/routes HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc2NTUyNTMsImlhdCI6MTY4NzQzOTI1MywiaXNzIjoidGVzdCIsIm5iZiI6MTY4NzQzOTI1Mywic3ViIjoiYWU1MTgyYTctNzkzNy00MTExLTkzZTMtNTZkYTE0YzBjNTZmIn0.zgVfTgOnqi1PKiHjk76WBkFuSFQt7tm8wTAgOD2uJuE
 
-###
+### Get all the routes in a compact format
 GET https://localhost:8443/api/administration/compact-routes HTTP/1.1
+
+
+### Get all the analytic data
+GET https://localhost:8443/api/analytic HTTP/1.1

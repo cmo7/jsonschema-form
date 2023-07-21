@@ -7,6 +7,7 @@ import (
 	"nartex/ngr-stack/database/factories"
 )
 
+// Seed seeds the database with some data for testing
 func Seed() {
 
 	log.Println("Seeding...")
@@ -47,8 +48,4 @@ func Seed() {
 		DefaultForNewUsers: true,
 	})
 	database.DB.Create(newUserRole)
-
-	// Create posts
-	posts := factories.PostFactory{}.CreateMany(1)
-	database.DB.Create(&posts)
 }

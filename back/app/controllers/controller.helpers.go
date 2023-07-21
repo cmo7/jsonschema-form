@@ -7,6 +7,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// This function is used to parse the page and size parameters from the query string
+// and return the values as integers
+// If the page or size parameters are invalid, the default values are returned
 func pageParams(c *fiber.Ctx) (page int, size int, err error) {
 	pageParam := c.Query("page", "1")
 	page, err = strconv.Atoi(pageParam)

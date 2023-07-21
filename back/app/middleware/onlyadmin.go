@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// OnlyAdmin is a middleware that checks if the user is an admin before continuing the request
 func OnlyAdmin(c *fiber.Ctx) error {
 
 	if c.Locals("claims") == nil {

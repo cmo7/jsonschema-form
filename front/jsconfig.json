@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "~api/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/api/*"
+            ],
+            "~assets/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/assets/*"
+            ],
+            "~components/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/components/*"
+            ],
+            "~hooks/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/hooks/*"
+            ],
+            "~layouts/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/layouts/*"
+            ],
+            "~pages/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/pages/*"
+            ],
+            "~providers/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/providers/*"
+            ],
+            "~rjsf-config/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/rjsf-config/*"
+            ],
+            "~stories/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/stories/*"
+            ],
+            "~types/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/types/*"
+            ],
+            "~src/*": [
+                "C:/Users/mconcepcion/git/ngr-stack/front/src/*"
+            ]
+        }
+    }
+}

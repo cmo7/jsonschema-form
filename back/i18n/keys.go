@@ -1,21 +1,25 @@
 package i18n
 
-type MessageKey string
+// MessageKey is a type for all message keys
+type MessageKey int64
 
+// Numeric enum, easy to extend.
 const (
-	REQUIRED             MessageKey = "required"
-	NOT_FOUND            MessageKey = "notFound"
-	INVALID              MessageKey = "invalid"
-	ALREADY_EXISTS       MessageKey = "alreadyExists"
-	NOT_FOUND_OR_INVALID MessageKey = "notFoundOrInvalid"
-	FOUND                MessageKey = "found"
-	CREATED              MessageKey = "created"
-	UPDATED              MessageKey = "updated"
-	NOT_DELETED          MessageKey = "notDeleted"
-	DELETED              MessageKey = "deleted"
-	GET_ALL              MessageKey = "getAll"
-	GET                  MessageKey = "get"
-	CREATE               MessageKey = "create"
-	UPDATE               MessageKey = "update"
-	DELETE               MessageKey = "delete"
+	REQUIRED MessageKey = iota
+	NOT_FOUND
+	INVALID
+	ALREADY_EXISTS
+	NOT_FOUND_OR_INVALID
+	FOUND
+	CREATED
+	UPDATED
+	NOT_DELETED
+	DELETED
+	GET_ALL
+	GET
+	CREATE
+	UPDATE
+	DELETE
+	SERVER_RUNNING
+	HEALTH_CHECK
 )

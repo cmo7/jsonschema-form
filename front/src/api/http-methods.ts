@@ -13,9 +13,9 @@ type Headers = {
  *
  * @param endpoint
  * @param {Headers} headers
- * @returns {T} The response from the server
+ * @returns {Promise<T>} The response from the server
  */
-async function get<T>(endpoint: string, headers?: Headers) {
+async function get<T>(endpoint: string, headers?: Headers): Promise<T> {
   const response = await fetch(`${baseApiUrl()}/${endpoint}`, {
     method: 'GET',
     headers: {
@@ -37,9 +37,9 @@ async function get<T>(endpoint: string, headers?: Headers) {
  * @param endpoint
  * @param {Req} data
  * @param {Headers} headers
- * @returns {Res} The response from the server
+ * @returns {Promise<Res>} The response from the server
  */
-async function post<Req, Res>(endpoint: string, data: Req, headers?: Headers) {
+async function post<Req, Res>(endpoint: string, data: Req, headers?: Headers): Promise<Res> {
   const response = await fetch(`${baseApiUrl()}/${endpoint}`, {
     method: 'POST',
     headers: {
@@ -62,9 +62,9 @@ async function post<Req, Res>(endpoint: string, data: Req, headers?: Headers) {
  * @param endpoint
  * @param {Req} data
  * @param {Headers} headers
- * @returns {Res} The response from the server
+ * @returns {Promise<Res>} The response from the server
  */
-async function put<Req, Res>(endpoint: string, data: Req, headers?: Headers) {
+async function put<Req, Res>(endpoint: string, data: Req, headers?: Headers): Promise<Res> {
   const response = await fetch(`${baseApiUrl()}/${endpoint}`, {
     method: 'PUT',
     headers: {
@@ -86,9 +86,9 @@ async function put<Req, Res>(endpoint: string, data: Req, headers?: Headers) {
  *
  * @param endpoint
  * @param {Headers} headers
- * @returns {Res} The response from the server
+ * @returns {Promise<Res>} The response from the server
  */
-async function del<Res>(endpoint: string, headers?: Headers) {
+async function del<Res>(endpoint: string, headers?: Headers): Promise<Res> {
   const response = await fetch(`${baseApiUrl()}/${endpoint}`, {
     method: 'DELETE',
     headers: {

@@ -1,14 +1,12 @@
 package i18n
 
-import (
-	"fmt"
-)
+// Message is a map of MessageKey and string, used to store the messages for a locale
+type Message = map[MessageKey]string
 
-type Messages = map[MessageKey]string
+// Dictionary is a map of Locale and Message, used to store the messages each locale
+type Dictionary = map[Locale]Message
 
-type DictionaryType = map[Locale]Messages
-
-var Dictionary = DictionaryType{
+var MessageDictionary = Dictionary{
 	ES: {
 		REQUIRED:             "%s es requerido",
 		NOT_FOUND:            "%s no encontrado",
@@ -25,6 +23,8 @@ var Dictionary = DictionaryType{
 		CREATE:               "crear %s",
 		UPDATE:               "actualizar %s",
 		DELETE:               "eliminar %s",
+		SERVER_RUNNING:       "El servidor se está ejecutando",
+		HEALTH_CHECK:         "El servidor se está ejecutando",
 	},
 	EN: {
 		REQUIRED:             "%s is required",
@@ -42,13 +42,7 @@ var Dictionary = DictionaryType{
 		CREATE:               "create %s",
 		UPDATE:               "update %s",
 		DELETE:               "delete %s",
+		SERVER_RUNNING:       "Server is running",
+		HEALTH_CHECK:         "Server is running",
 	},
-}
-
-func Get(locale Locale, key MessageKey) string {
-	return Dictionary[locale][key]
-}
-
-func GetWithValue(locale Locale, key MessageKey, value string) string {
-	return fmt.Sprintf(Dictionary[locale][key], value)
 }

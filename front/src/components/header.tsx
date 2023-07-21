@@ -5,9 +5,6 @@ import {
   HStack,
   IconButton,
   Link,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Spacer,
   VStack,
   chakra,
@@ -15,12 +12,29 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useScroll } from 'framer-motion';
 import React from 'react';
 import { AiFillHome, AiOutlineInbox, AiOutlineMenu } from 'react-icons/ai';
 import { BsFillCameraVideoFill } from 'react-icons/bs';
 import { FaMoon, FaSun } from 'react-icons/fa';
-import { IoIosArrowDown } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
+
+const mainMenu = [
+  {
+    name: 'Dashboard',
+    icon: AiFillHome,
+    href: '/',
+  },
+  {
+    name: 'Profile',
+    icon: AiOutlineInbox,
+    href: '/profile',
+  },
+  {
+    name: 'Users',
+    icon: BsFillCameraVideoFill,
+    href: '/users',
+  },
+];
 
 export default function Header() {
   const { toggleColorMode: toggleMode } = useColorMode();
@@ -28,14 +42,8 @@ export default function Header() {
   const SwitchIcon = useColorModeValue(FaMoon, FaSun);
   const bg = useColorModeValue('white', 'gray.800');
   const ref = React.useRef(null);
-  const [y, setY] = React.useState(0);
-  const height = ref.current ? ref.current.getBoundingClientRect() : 0;
-  const { scrollY } = useScroll();
-  React.useEffect(() => {
-    return scrollY.on('change', () => {
-      setY(scrollY.get());
-    });
-  }, [scrollY]);
+  const navigate = useNavigate();
+
   const cl = useColorModeValue('gray.800', 'white');
   const mobileNav = useDisclosure();
 
@@ -56,34 +64,48 @@ export default function Header() {
       shadow="sm"
     >
       <CloseButton aria-label="Close menu" justifySelf="self-start" onClick={mobileNav.onClose} />
-      <Button w="full" variant="ghost" leftIcon={<AiFillHome />}>
-        Dashboard
-      </Button>
-      <Button w="full" variant="solid" colorScheme="brand" leftIcon={<AiOutlineInbox />}>
-        Inbox
-      </Button>
-      <Button w="full" variant="ghost" leftIcon={<BsFillCameraVideoFill />}>
-        Videos
-      </Button>
+      {mainMenu.map((link) => (
+        <Button
+          w="full"
+          variant="ghost"
+          leftIcon={<link.icon />}
+          key={link.name}
+          onClick={() => {
+            navigate(link.href);
+          }}
+        >
+          {link.name}
+        </Button>
+      ))}
     </VStack>
   );
   return (
     <React.Fragment>
-      <chakra.header
-        ref={ref}
-        shadow={y > height ? 'sm' : undefined}
-        transition="box-shadow 0.2s"
-        bg={bg}
-        borderTop="6px solid"
-        borderTopColor="brand.400"
-        w="full"
-        overflowY="hidden"
-      >
-        <chakra.div h="4.5rem" mx="auto" maxW="1200px">
+      <chakra.header ref={ref} bg={bg} w="full" overflowY="hidden">
+        <chakra.div h="4.5rem" mx="auto" maxW="container.xl">
           <Flex w="full" h="full" px="6" alignItems="center" justifyContent="space-between">
             <Flex align="flex-start">
               <Link href="/">
-                <HStack>{/*<Logo />*/}</HStack>
+                <HStack mr={4}>
+                  {' '}
+                  <chakra.a
+                    href="#"
+                    fontSize="xl"
+                    fontWeight="bold"
+                    color="gray.600"
+                    _dark={{
+                      color: 'white',
+                      _hover: {
+                        color: 'gray.300',
+                      },
+                    }}
+                    _hover={{
+                      color: 'gray.700',
+                    }}
+                  >
+                    Brand
+                  </chakra.a>
+                </HStack>
               </Link>
             </Flex>
             <Flex>
@@ -94,63 +116,21 @@ export default function Header() {
                   md: 'flex',
                 }}
               >
-                <Popover>
-                  <PopoverTrigger>
-                    <Button
-                      bg={bg}
-                      color="gray.500"
-                      display="inline-flex"
-                      alignItems="center"
-                      fontSize="md"
-                      _hover={{
-                        color: cl,
-                      }}
-                      _focus={{
-                        boxShadow: 'none',
-                      }}
-                      rightIcon={<IoIosArrowDown />}
-                    >
-                      Features
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    w="100vw"
-                    maxW="md"
-                    _focus={{
-                      boxShadow: 'md',
+                {mainMenu.map((link) => (
+                  <Button
+                    key={link.name}
+                    variant="ghost"
+                    size="sm"
+                    _hover={{
+                      color: cl,
                     }}
-                  ></PopoverContent>
-                </Popover>
-                <Button
-                  bg={bg}
-                  color="gray.500"
-                  display="inline-flex"
-                  alignItems="center"
-                  fontSize="md"
-                  _hover={{
-                    color: cl,
-                  }}
-                  _focus={{
-                    boxShadow: 'none',
-                  }}
-                >
-                  Blog
-                </Button>
-                <Button
-                  bg={bg}
-                  color="gray.500"
-                  display="inline-flex"
-                  alignItems="center"
-                  fontSize="md"
-                  _hover={{
-                    color: cl,
-                  }}
-                  _focus={{
-                    boxShadow: 'none',
-                  }}
-                >
-                  Pricing
-                </Button>
+                    onClick={() => {
+                      navigate(link.href);
+                    }}
+                  >
+                    {link.name}
+                  </Button>
+                ))}
               </HStack>
             </Flex>
             <Spacer />
@@ -166,18 +146,24 @@ export default function Header() {
                   colorScheme="brand"
                   variant="ghost"
                   size="sm"
+                  _hover={{
+                    color: cl,
+                  }}
                   onClick={() => {
-                    window.location.href = '/login';
+                    navigate('/login');
                   }}
                 >
                   Acceso
                 </Button>
                 <Button
                   colorScheme="brand"
-                  variant="solid"
+                  variant="ghost"
                   size="sm"
+                  _hover={{
+                    color: cl,
+                  }}
                   onClick={() => {
-                    window.location.href = '/register';
+                    navigate('/register');
                   }}
                 >
                   Registro

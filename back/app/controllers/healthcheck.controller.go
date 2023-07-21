@@ -1,11 +1,15 @@
 package controllers
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"nartex/ngr-stack/i18n"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 func HealthCheck(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  "success",
-		"message": "Server is running",
+		"message": i18n.M(i18n.HEALTH_CHECK),
 	})
 }

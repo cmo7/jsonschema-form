@@ -1,5 +1,5 @@
-import { ReactNode, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { ReactNode } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/auth';
 
 interface ProtectedRouteProps {
@@ -7,15 +7,10 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const navigate = useNavigate();
   const auth = useAuth();
-  useEffect(() => {
-    if (!auth.isAuthenticated()) {
-      navigate('/login');
-    }
-  }, [auth, navigate]);
+
   if (!auth.isAuthenticated()) {
-    return null;
+    return <Navigate to="/login" />;
   }
 
   return <>{children}</>;

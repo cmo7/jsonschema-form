@@ -6,8 +6,11 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+import GuestRoute from './components/guest-route';
+import ProtectedRoute from './components/protected-route';
 import { ApiView } from './pages/admin-pages';
-import { Error404, Login, Profile, Register, UserRoot } from './pages/user-pages';
+import { Login, Profile, Register, UserList, UserPage, UserRoot } from './pages/user-pages';
+import { Error404 } from './pages/user/error404';
 import { AuthProvider } from './providers/auth-context';
 import theme from './theme';
 
@@ -19,15 +22,35 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'register',
-        element: <Register />,
+        element: (
+          <GuestRoute>
+            <Register />
+          </GuestRoute>
+        ),
       },
       {
         path: 'login',
-        element: <Login />,
+        element: (
+          <GuestRoute>
+            <Login />
+          </GuestRoute>
+        ),
       },
       {
         path: 'profile',
-        element: <Profile />,
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'users',
+        element: <UserList />,
+      },
+      {
+        path: 'user/:id',
+        element: <UserPage />,
       },
     ],
   },

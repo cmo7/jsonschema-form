@@ -15,10 +15,10 @@ func postRoutes() *fiber.App {
 	public := router.Group("/")
 
 	public.Get("/", controller.GetAll()).
-		Name(i18n.GetWithValue(controller.Locale, i18n.GET_ALL, controller.ResourcePluralName))
+		Name(i18n.S(i18n.GET_ALL, controller.ResourcePluralName))
 
 	public.Get("/:id", controller.Get()).
-		Name(i18n.GetWithValue(controller.Locale, i18n.GET, controller.ResourceName))
+		Name(i18n.S(i18n.GET, controller.ResourceName))
 
 	protected := router.Group("/").
 		Use(middleware.ValidateToken).
@@ -26,11 +26,11 @@ func postRoutes() *fiber.App {
 
 	protected.
 		Post("/", controller.Create()).
-		Name(i18n.GetWithValue(controller.Locale, i18n.CREATE, controller.ResourceName))
+		Name(i18n.S(i18n.CREATE, controller.ResourceName))
 
 	protected.
 		Put("/:id", controller.Update()).
-		Name(i18n.GetWithValue(controller.Locale, i18n.UPDATE, controller.ResourceName))
+		Name(i18n.S(i18n.UPDATE, controller.ResourceName))
 
 	return router
 }

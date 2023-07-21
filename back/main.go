@@ -12,25 +12,31 @@ import (
 	"os/exec"
 )
 
+// Initialize the services and do codegen tasks.
 func init() {
+	// Load the configuration from env files.
 	config.LoadConfig()
+	// Establish the connection to the database.
 	database.ConnectToDataBase()
 
+	// If enabled in config, migrate registered models to the database
 	if config.Generate.AutoMigrate {
-		//banners.Print("Sincronizando Base de Datos")
 		database.SyncDataBase()
 	}
+
+	// If enabled in config, use Tygo (as an external executable) to generate the
+	// front end types
 	if config.Generate.FrontTypes {
-		//banners.Print("Generando Tipos de Datos")
-		//codegen.GenerateFrontTypes()
 		cmd := exec.Command("tygo", "generate")
 		if err := cmd.Run(); err != nil {
 			fmt.Println("Error: ", err)
 		}
 	}
-	//banners.Print("Generando Schemas de Formularios")
+
+	// Pre-generate the Json Schemas for the registered models.
 	codegen.GenerateJsonFormSchemas()
 
+	// If selected, seed the database with mock data.
 	if config.Debug.DatabaseSeed {
 		seeders.Seed()
 	}
