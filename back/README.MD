@@ -26,6 +26,9 @@ Algunas de las características de este proyecto son:
 -   Soporte para Paginación
 -   Soporte para Herramientas de Desarrollo
 -   Soporte para Validación de Formularios
+-   Configuración con variables de entorno
+-   Configuración de linting
+-   Análisis de código estático con SonarLint
 
 ## Tecnologías y Dependencias
 

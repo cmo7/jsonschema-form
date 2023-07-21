@@ -1,4 +1,6 @@
-# NGR-Stack (Frontend)
+# NGR-Stack (Frontend
+
+)
 
 Este proyecto es una aplicación cliente desarrollada con [React](https://reactjs.org/)
 
